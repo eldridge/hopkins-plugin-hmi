@@ -1,0 +1,22 @@
+---
+author:
+  - 'Mike Eldridge <diz@cpan.org>'
+distribution_type: module
+generated_by: 'Module::Install version 0.80'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Hopkins-Plugin-HMI
+no_index:
+  directory:
+    - inc
+requires:
+  Catalyst::Engine::Embeddable: 0.000002
+  Class::Accessor::Fast: 0.31
+  Hopkins: 0.900
+  POE::Component::Server::HTTP: 0.09
+  Sys::Hostname::FQDN: 0.10
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.900
