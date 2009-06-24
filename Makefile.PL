@@ -11,13 +11,16 @@ license			'perl';
 version_from	'lib/Hopkins/Plugin/HMI.pm';
 
 # hopkins
-requires 'Hopkins'						=> '0.900';
+requires 'Hopkins' => '0.900';
 
 # supporting classes
-requires 'Class::Accessor::Fast'		=> '0.31';
-requires 'POE::Component::Server::HTTP'	=> '0.09';
-requires 'Sys::Hostname::FQDN'			=> '0.10';
-requires 'Catalyst::Engine::Embeddable'	=> '0.000002';
+requires 'Class::Accessor::Fast'						=> '0.31';
+requires 'POE::Component::Server::HTTP'					=> '0.09';
+requires 'Sys::Hostname::FQDN'							=> '0.10';
+requires 'Catalyst::Engine::Embeddable'					=> '0.000002';
+requires 'Catalyst::Plugin::Authentication'				=> '0.100092';
+requires 'Catalyst::Plugin::Session'					=> '0.24';
+requires 'Catalyst::Plugin::Session::Store::FastMmap'	=> '0.11';
 
 # required for the test suite
 #test_requires 'Class::Accessor::Fast';

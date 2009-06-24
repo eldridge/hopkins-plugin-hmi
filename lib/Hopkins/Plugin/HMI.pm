@@ -25,11 +25,11 @@ use POE::Component::Server::HTTP;
 
 use Class::Accessor::Fast;
 
-use Hopkins::Plugin::HMI::Catalyst;
-
 use base 'Class::Accessor::Fast';
 
-__PACKAGE__->mk_accessors(qw(app));
+__PACKAGE__->mk_accessors(qw(kernel manager config app));
+
+our $catalyst;
 
 =head1 STATES
 
@@ -41,18 +41,29 @@ __PACKAGE__->mk_accessors(qw(app));
 
 sub new
 {
-	my $proto	= shift;
-	my $opts	= shift;
+	my $self = shift->SUPER::new(@_);
 
-	$opts->{port} ||= 8088;
+	# load the Catalyst-related bits as late as possible so
+	# that we can give it a dynamic configuration.  Catalyst
+	# is not very OO minded, so we have to monkey around
+	# with its worldview.
 
-	my $self = $proto->SUPER::new($opts);
+	$catalyst->{'Plugin::Authentication'}	= $self->config->{auth};
+	$catalyst->{session}					= $self->config->{session};
+
+	require 'Hopkins/Plugin/HMI/Catalyst.pm';
 
 	$self->app(new Hopkins::Plugin::HMI::Catalyst);
 
+	# handle plugin-specific configuration, then create
+	# a POE::Component::Server::HTTP instance that will
+	# dispatch incoming requests to the Catalyst instance.
+
+	$self->config->{port} ||= 8088;
+
 	my %args =
 	(
-		Port			=> $opts->{port},
+		Port			=> $self->config->{port},
 		ContentHandler	=> { '/' => sub { $self->handler(@_) } },
 		Headers			=> { Server => "hopkins/$Hopkins::VERSION" }
 	);

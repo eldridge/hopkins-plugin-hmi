@@ -54,6 +54,21 @@ a {
 	color: #1F6196;
 }
 
+hr
+{
+	border-width:			0 0 2px 0;
+	border-bottom-style:	dotted;
+	border-bottom-color:	#cfcfcf;
+	margin-top:				5px;
+	margin-bottom:			5px;
+}
+
+.error
+{
+	color: #b00
+}
+
+
 /** Header Style Starts Here */
 
 #header {
@@ -137,24 +152,46 @@ a {
 	background: url(images/bg-modal.png) no-repeat left bottom;
 }
 
+form#login
+{
+	margin-top:		15px;
+	margin-left:	75px;
+	margin-right:	75px;
+	margin-top:		50px;
+}
+
 form#login fieldset
 {
-	margin-top:	15px;
 	border: none;
-	margin-left: 80px;
-	margin-right: 80px;
-	margin-top: 50px;
 }
 
 form#login fieldset input
 {
-	float: right;
+	line-height:		1.5em;
+	background-color:	rgb(198, 226, 255);
+	border:				1px solid rgb(54, 100, 139);
+	float:				right;
 }
 
 form#login fieldset label
 {
-	float: left;
-	font-weight: bold;
+	line-height:	1.5em;
+	font-weight:	bold;
+	float:			left;
+}
+
+form#login fieldset input.submit,
+input.submit
+{
+	color:				#222;
+	background-color:	#ffc373;
+	border:				1px solid rgb(54, 100, 139);
+	padding:			0px 5px;
+}
+
+form#login fieldset label.error
+{
+	font-weight:		normal;
 }
 
 #content {

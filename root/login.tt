@@ -18,19 +18,24 @@
 			</div>
 
 			<div id="content">
-				<form id="login">
+				<form id="login" method="post">
 					<fieldset>
 						<label>username:</label>
-						<input type="text" name="username" />
+						<input type="text" name="username" value="[% c.req.params.username %]" />
 
 						<br>
 
 						<label>password:</label>
 						<input type="password" name="password" />
+					</fieldset>
 
-						<br>
+					<hr />
 
-						<input type="submit" value="Login" />
+					<fieldset>
+						[% IF error %]
+							<label class="error">[% error %]</label>
+						[% END %]
+						<input class="submit" type="submit" value="login" />
 					</fieldset>
 				</form>
 			</div>

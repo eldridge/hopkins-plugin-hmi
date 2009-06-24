@@ -12,7 +12,15 @@ use warnings;
 
 use Catalyst;
 
-__PACKAGE__->setup(qw/Static::Simple/);
+# fuck catalyst and its compile-time bullshit
+
+__PACKAGE__->config(%$Hopkins::Plugin::HMI::catalyst);
+
+use Hopkins::Plugin::HMI::Log;
+#use Catalyst::Log::Log4perl;
+
+__PACKAGE__->setup(qw/Authentication Session Session::Store::FastMmap Session::State::Cookie Static::Simple/);
+__PACKAGE__->log(new Hopkins::Plugin::HMI::Log);
 
 =back
 
