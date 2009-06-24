@@ -70,18 +70,6 @@ sub login_POST : Private
 	$credentials->{username} = scalar $c->req->params->{username};
 	$credentials->{password} = scalar $c->req->params->{password};
 
-	print STDERR "HOLY STINKFUCKERS\n";
-
-	$c->log->error('SHIT');
-
-	#my $credentials =
-	#{
-	#	username => scalar($c->req->params->{username}),
-	#	password => scalar($c->req->params->{password}),
-	#};
-
-	#$c->req->method('GET');
-
 	$c->detach('/default') if $c->authenticate($credentials);
 
 	$c->stash->{error} = 'login incorrect';
