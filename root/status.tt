@@ -1,0 +1,75 @@
+[% page.sidebar = 'default' %]
+
+<h2>queue overview</h2>
+
+<table id="status">
+	<thead>
+		<tr>
+			<th>queue</th>
+			<th>status</th>
+			<th>concurrency</th>
+			<th>queued</th>
+			<th>load</th>
+		</tr>
+	</thead>
+	<tbody>
+		[% FOREACH name = hopkins.queues.keys %]
+		<tr>
+			<td>
+				<div style="float:left">
+				[% SWITCH hopkins.queue(name).status_string %]
+					[% CASE 'idle' %]
+						<span style="color: gray">[% name %]</span>
+					[% CASE 'running' %]
+						<span style="color: green">[% name %]</span>
+					[% CASE 'running (frozen)' %]
+						<span style="color: yellow">[% name %]</span>
+					[% CASE 'halted' %]
+						<span style="color: orange">[% name %]</span>
+					[% CASE 'halted (frozen)' %]
+						<span style="color: red">[% name %]</span>
+					[% CASE %]
+						<span style="color: black">[% name %]</span>
+				[% END %]
+				</div>
+				<div style="float:right">
+				[% IF hopkins.queue(name).halted %]
+					<a href="[% c.uri_for('/queue/start', name) %]">
+						<img src="[% c.uri_for('/static/images/control_play.png') %]" />
+					</a>
+				[% ELSE %]
+					<a href="[% c.uri_for('/queue/halt', name) %]">
+						<img src="[% c.uri_for('/static/images/control_stop_blue.png') %]" />
+					</a>
+				[% END %]
+				[% IF hopkins.queue(name).frozen %]
+					<a href="[% c.uri_for('/queue/thaw', name) %]">
+						<img src="[% c.uri_for('/static/images/basket_put.png') %]" />
+					</a>
+				[% ELSE %]
+					<a href="[% c.uri_for('/queue/freeze', name) %]">
+						<img src="[% c.uri_for('/static/images/basket_delete.png') %]" />
+					</a>
+				[% END %]
+				</div>
+			</td>
+			<td>[% hopkins.queue(name).status_string %]</td>
+			<td>[% hopkins.queue(name).concurrency %]</td>
+			<td>[% hopkins.queue(name).num_queued %]</td>
+			<td>
+				[% SET load = hopkins.queue(name).num_queued / hopkins.queue(name).concurrency %]
+				[% SET load = load.printf('%.2f') %]
+				[% IF load > '1.00' %]
+					<span style="color: red">[% load %]</span>
+				[% END %]
+				[% IF load == '1.00' %]
+					<span style="color: orange">[% load %]</span>
+				[% END %]
+				[% IF load < '1.00' %]
+					<span style="color: green">[% load %]</span>
+				[% END %]
+			</td>
+		</tr>
+		[% END %]
+	</tbody>
+</table>
