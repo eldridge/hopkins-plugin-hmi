@@ -1,6 +1,8 @@
 [% DEFAULT page.skin	= 'efflorescence' %]
 [% DEFAULT page.layout	= 'default' %]
+[% DEFAULT page.sidebar	= 'default' %]
 [% DEFAULT page.title	= '' %]
+[% DEFAULT page.refresh	= 0 %]
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -14,7 +16,11 @@
 		<meta name="robots" content="index, follow, noarchive" />
 		<meta name="googlebot" content="noarchive" />
 
-		<link rel="stylesheet" type="text/css" href="static/[% page.skin %]/style.css" media="screen, projection, tv " />
+		[% IF page.refresh %]
+			<meta http-equiv="refresh" content="[% page.refresh %];url=[% c.req.uri %]" />
+		[% END %]
+
+		<link rel="stylesheet" type="text/css" href="/static/[% page.skin %]/style.css" media="screen, projection, tv " />
 	</head>
 
 	<body>

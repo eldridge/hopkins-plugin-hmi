@@ -20,6 +20,8 @@ __PACKAGE__->config({
 	static_build		=> 0
 });
 
+$Template::Stash::SCALAR_OPS->{printf} = sub { sprintf $_[1], $_[0] };
+
 
 =back
 

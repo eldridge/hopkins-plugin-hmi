@@ -1,4 +1,5 @@
 [% page.sidebar = 'default' %]
+[% page.refresh = 10 %]
 
 <h2>queue overview</h2>
 
@@ -17,40 +18,37 @@
 		<tr>
 			<td>
 				<div style="float:left">
-				[% SWITCH hopkins.queue(name).status_string %]
-					[% CASE 'idle' %]
-						<span style="color: gray">[% name %]</span>
-					[% CASE 'running' %]
-						<span style="color: green">[% name %]</span>
-					[% CASE 'running (frozen)' %]
-						<span style="color: yellow">[% name %]</span>
-					[% CASE 'halted' %]
-						<span style="color: orange">[% name %]</span>
-					[% CASE 'halted (frozen)' %]
-						<span style="color: red">[% name %]</span>
-					[% CASE %]
-						<span style="color: black">[% name %]</span>
-				[% END %]
+					[% SWITCH hopkins.queue(name).status_string %]
+						[% CASE 'idle' %][% SET color='gray' %]
+						[% CASE 'running' %][% SET color='green' %]
+						[% CASE 'running (frozen)' %][% SET color='yellow' %]
+						[% CASE 'halted' %][% SET color='orange' %]
+						[% CASE 'halted (frozen)' %][% SET color='red' %]
+						[% CASE %][% SET color='black' %]
+					[% END %]
+					<a href="[% c.uri_for('/queue/details', name) %]">
+						<span style="color: [% color %]">[% name %]</span>
+					</a>
 				</div>
 				<div style="float:right">
-				[% IF hopkins.queue(name).halted %]
-					<a href="[% c.uri_for('/queue/start', name) %]">
-						<img src="[% c.uri_for('/static/images/control_play.png') %]" />
-					</a>
-				[% ELSE %]
-					<a href="[% c.uri_for('/queue/halt', name) %]">
-						<img src="[% c.uri_for('/static/images/control_stop_blue.png') %]" />
-					</a>
-				[% END %]
-				[% IF hopkins.queue(name).frozen %]
-					<a href="[% c.uri_for('/queue/thaw', name) %]">
-						<img src="[% c.uri_for('/static/images/basket_put.png') %]" />
-					</a>
-				[% ELSE %]
-					<a href="[% c.uri_for('/queue/freeze', name) %]">
-						<img src="[% c.uri_for('/static/images/basket_delete.png') %]" />
-					</a>
-				[% END %]
+					[% IF hopkins.queue(name).halted %]
+						<a href="[% c.uri_for('/queue/start', name) %]" title="start [% name %]">
+							<img src="[% c.uri_for('/static/images/control_play.png') %]" />
+						</a>
+					[% ELSE %]
+						<a href="[% c.uri_for('/queue/halt', name) %]" title="halt [% name %]">
+							<img src="[% c.uri_for('/static/images/control_stop_blue.png') %]" />
+						</a>
+					[% END %]
+					[% IF hopkins.queue(name).frozen %]
+						<a href="[% c.uri_for('/queue/thaw', name) %]" title="thaw [% name %]">
+							<img src="[% c.uri_for('/static/images/basket_put.png') %]" />
+						</a>
+					[% ELSE %]
+						<a href="[% c.uri_for('/queue/freeze', name) %]" title="freeze [% name %]">
+							<img src="[% c.uri_for('/static/images/basket_delete.png') %]" />
+						</a>
+					[% END %]
 				</div>
 			</td>
 			<td>[% hopkins.queue(name).status_string %]</td>

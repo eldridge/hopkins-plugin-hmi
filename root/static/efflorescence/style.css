@@ -52,6 +52,17 @@ blockquote {
 
 a {
 	color: #1F6196;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+	color: gray;
+}
+
+img
+{
+	border: 0;
 }
 
 hr
@@ -198,6 +209,7 @@ form#login fieldset label.error
 	float: right;
 	width: 420px;
 	padding: 40px 50px 30px 60px;
+	min-height: 600px;
 }
 
 #content h2 {
@@ -257,4 +269,46 @@ form#login fieldset label.error
 	color: #FFFFFF;
 }
 
+table
+{
+	margin-top:			10px;
+	margin-bottom:		10px;
+	border-collapse:	collapse;
+}
 
+table tr th,
+table tr td
+{
+	border:				1px solid rgb(54, 100, 139);
+	padding:			1px 3px;
+	line-height:		1.5em;
+}
+
+table tr td
+{
+	background-color:	#ffd;
+}
+
+table thead tr th
+{
+	background-color:	#ffc373;
+}
+
+table img
+{
+	vertical-align: -25%;
+
+}
+
+table#status
+{
+	width: 100%;
+}
+
+table th.undecorated,
+table td.undecorated
+{
+	border: none;
+	background:none;
+
+}

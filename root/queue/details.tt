@@ -1,0 +1,44 @@
+[% page.sidebar = 'default' %]
+
+<h2>queue details for [% queue.name %]</h2>
+
+[% queue.error %]
+
+<table id="status">
+	<thead>
+		<tr>
+			<th>task</th>
+			<th>status</th>
+			<th>queued</th>
+			<th>started</th>
+		</tr>
+	</thead>
+	<tbody>
+		[% FOREACH work = queue.tasks.Values %]
+			<tr>
+				<td>
+					<div style="float:left">[% work.task.name %]</div>
+					<div style="float:right">
+						<a href="[% c.uri_for('/work/cancel', work.id) %]" title="cancel [% work.task.name %]">
+							<img src="[% c.uri_for('/static/images/delete.png') %]" />
+						</a>
+						<a href="[% c.uri_for('/work/cancel', work.id) %]" title="show options">
+							<img src="[% c.uri_for('/static/images/bullet_arrow_down.png') %]" />
+						</a>
+					</div>
+				</td>
+				<td>
+					[% IF work.date_started %]
+						<span style="color: green">running</span>
+					[% ELSE %]
+						<span style="color: orange">queued</span>
+					[% END %]
+				</td>
+				<td title="[% work.date_enqueued %]">[% now - work.date_enqueued %]</td>
+				<td>
+					[% work.date_started.iso8601 || '-' %]
+				</td>
+			</tr>
+		[% END %]
+	</tbody>
+</table>

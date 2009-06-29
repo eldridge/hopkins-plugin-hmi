@@ -31,9 +31,12 @@ sub auto : Private
 	my $self	= shift;
 	my $c		= shift;
 
-	$c->stash->{host} = fqdn;
+	$c->stash->{host}	= fqdn;
+	$c->stash->{now}	= DateTime->now(time_zone => 'local');
 
 	$c->detach('login') if not defined $c->user;
+
+	1;
 }
 
 sub default : Private
@@ -75,6 +78,28 @@ sub login_POST : Private
 	$c->stash->{error} = 'login incorrect';
 
 	$c->detach('/login_GET');
+}
+
+sub status : Local
+{
+	my $self	= shift;
+	my $c		= shift;
+
+	$c->stash->{hopkins} = $c->config->{hopkins};
+}
+
+sub render : ActionClass('RenderView') { }
+
+sub end : Private
+{
+	my $self	= shift;
+	my $c		= shift;
+
+	use Data::Dumper;
+
+	print STDERR Dumper($c->error);
+
+	$c->forward('render');
 }
 
 sub end : ActionClass('RenderView') { }

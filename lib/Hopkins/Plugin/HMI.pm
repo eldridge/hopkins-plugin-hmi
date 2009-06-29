@@ -50,6 +50,8 @@ sub new
 
 	$catalyst->{'Plugin::Authentication'}	= $self->config->{auth};
 	$catalyst->{session}					= $self->config->{session};
+	$catalyst->{session}->{cookie_name}		= 'hopkins-hmi';
+	$catalyst->{hopkins}					= $self->manager;
 
 	require 'Hopkins/Plugin/HMI/Catalyst.pm';
 
@@ -82,8 +84,15 @@ sub handler
 
 	$app->handle_request($req, \$obj);
 
-	if (ref($obj->content) eq 'IO::File') {
+	if (not defined $obj) {
+		print STDERR "catalyst request failed: response object not defined\n";
+		return;
+	}
+
+	if (UNIVERSAL::isa($obj->content, 'IO::File')) {
 		my $content;
+
+		print STDERR "content isa IO::File\n";
 
 		while (not eof $obj->content) {
 			read $obj->content, my ($buf), 64 * 1024;
@@ -92,6 +101,15 @@ sub handler
 
 		$obj->content($content);
 	}
+
+	# Catalyst::Engine::Embeddable->handle_request populates
+	# a HTTP::Response object, though PoCo::Server::HTTP has
+	# already provided us with one.  transcribe the contents
+	# of the catalyst HTTP::Response onto the other instance
+	# provided by POE::Component::Server::HTTP.
+
+	$res->header($_ => $obj->header($_))
+		foreach $obj->headers->header_field_names;
 
 	$res->code($obj->code);
 	$res->content($obj->content);
