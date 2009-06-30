@@ -20,14 +20,16 @@ interface to the job server using Catalyst.
 
 BEGIN { $ENV{CATALYST_ENGINE} = 'Embeddable' }
 
+use base 'Class::Accessor::Fast';
+
 use POE;
 use POE::Component::Server::HTTP;
 
 use Class::Accessor::Fast;
 
-use base 'Class::Accessor::Fast';
+use Template;
 
-__PACKAGE__->mk_accessors(qw(kernel manager config app));
+__PACKAGE__->mk_accessors(qw(kernel manager config app errmsg));
 
 our $catalyst;
 
@@ -53,7 +55,7 @@ sub new
 	$catalyst->{session}->{cookie_name}		= 'hopkins-hmi';
 	$catalyst->{hopkins}					= $self->manager;
 
-	require 'Hopkins/Plugin/HMI/Catalyst.pm';
+	require Hopkins::Plugin::HMI::Catalyst;
 
 	$self->app(new Hopkins::Plugin::HMI::Catalyst);
 
@@ -62,6 +64,8 @@ sub new
 	# dispatch incoming requests to the Catalyst instance.
 
 	$self->config->{port} ||= 8088;
+
+	$self->errmsg(join '', <DATA>);
 
 	my %args =
 	(
@@ -81,18 +85,32 @@ sub handler
 	my $app		= $self->app;
 
 	my $obj;
+	my @err;
 
-	$app->handle_request($req, \$obj);
+	my $code = $app->handle_request($req, \$obj, \@err);
 
-	if (not defined $obj) {
-		print STDERR "catalyst request failed: response object not defined\n";
-		return;
+	# if the request failed, show an error page, but use our
+	# own in place of Catalyst's butt ugly one.  process the
+	# page using TT in order to show error messages.
+
+	if (not defined $obj or $code == 500) {
+		my $template	= new Template;
+		my $stash		= { errors => \@err };
+		my $output		= '';
+
+		$template->process(\$self->errmsg, $stash, \$output);
+
+		$res->content($output);
+		$res->code(500);
+
+		return RC_OK;
 	}
+
+	# if the content we get back from is an IO::File object,
+	# flatten it by reading it in and spitting it back out.
 
 	if (UNIVERSAL::isa($obj->content, 'IO::File')) {
 		my $content;
-
-		print STDERR "content isa IO::File\n";
 
 		while (not eof $obj->content) {
 			read $obj->content, my ($buf), 64 * 1024;
@@ -132,3 +150,73 @@ and/or modify it under the same terms as Perl itself.
 =cut
 
 1;
+
+__DATA__
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>hopkins HMI - error</title>
+		<style type="text/css">
+			body
+			{
+				background-color:	#393939;
+				font-family:		Tahoma, Arial, Helvetica, sans-serif;
+			}
+
+			div
+			{
+				width:				800px;
+				margin:				auto;
+				margin-top:			100px;
+			}
+
+			div div
+			{
+				width:				auto;
+				margin:				0;
+				padding:			20px;
+				border:				1px solid #411;
+				background-color:	#911;
+			}
+
+			h1
+			{
+				color:				#fff;
+				font-size:			2em;
+				font-weight:		normal;
+				border-bottom:		2px dotted #f88;
+				padding-bottom:		10px;
+				margin:				0 0 0 0;
+			}
+
+			div p
+			{
+				color:				#ddd;
+			}
+
+			span
+			{
+				color:				#aaa;
+				font-size:			0.6em;
+				float:				right;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div>
+			<div>
+				<h1>Internal Server Error</h1>
+
+				[% FOREACH error = errors %]
+					<p>
+						[% error %]
+					</p>
+				[% END %]
+			</div>
+			<span>Hopkins::Plugin::HMI 0.900</span>
+		</div>
+	</body>
+</html>

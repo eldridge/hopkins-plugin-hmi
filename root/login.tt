@@ -17,7 +17,7 @@
 				</ul>
 			</div>
 
-			<div id="content">
+			<div id="content-min">
 				<form id="login" method="post">
 					<fieldset>
 						<label>username:</label>

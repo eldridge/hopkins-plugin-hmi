@@ -88,20 +88,6 @@ sub status : Local
 	$c->stash->{hopkins} = $c->config->{hopkins};
 }
 
-sub render : ActionClass('RenderView') { }
-
-sub end : Private
-{
-	my $self	= shift;
-	my $c		= shift;
-
-	use Data::Dumper;
-
-	print STDERR Dumper($c->error);
-
-	$c->forward('render');
-}
-
 sub end : ActionClass('RenderView') { }
 
 =back

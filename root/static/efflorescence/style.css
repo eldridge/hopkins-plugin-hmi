@@ -178,10 +178,10 @@ form#login fieldset
 
 form#login fieldset input
 {
-	line-height:		1.5em;
 	background-color:	rgb(198, 226, 255);
 	border:				1px solid rgb(54, 100, 139);
 	float:				right;
+	width:				190px;
 }
 
 form#login fieldset label
@@ -198,6 +198,7 @@ input.submit
 	background-color:	#ffc373;
 	border:				1px solid rgb(54, 100, 139);
 	padding:			0px 5px;
+	width:				auto;
 }
 
 form#login fieldset label.error
@@ -212,7 +213,14 @@ form#login fieldset label.error
 	min-height: 600px;
 }
 
-#content h2 {
+#content-min {
+	float: right;
+	width: 420px;
+	padding: 40px 50px 30px 60px;
+}
+
+#content h2,
+#content-min h2 {
 	margin: 0;
 	padding: 20px 0 10px 0;
 	border-bottom: 1px dotted #CFCFCF;
