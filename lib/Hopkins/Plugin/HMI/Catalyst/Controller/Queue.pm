@@ -11,8 +11,6 @@ Hopkins::Plugin::HMI::Catalyst::Controller::Queue
 
 =cut
 
-use Sys::Hostname::FQDN 'fqdn';
-
 use base 'Hopkins::Plugin::HMI::Catalyst::Controller';
 
 =head1 METHODS
