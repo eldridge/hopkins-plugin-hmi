@@ -54,6 +54,7 @@ sub new
 	$catalyst->{session}					= $self->config->{session};
 	$catalyst->{session}->{cookie_name}		= 'hopkins-hmi';
 	$catalyst->{hopkins}					= $self->manager;
+	$catalyst->{optsrc}						= $self->config->{optsrc};
 
 	require Hopkins::Plugin::HMI::Catalyst;
 

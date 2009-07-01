@@ -5,7 +5,7 @@
 <div id="menu">
 	<ul>
 		<li class="first"><a href="[% c.uri_for('/status') %]">Status</a></li>
-		<li><a href="#">Enqueue</a></li>
+		<li><a href="[% c.uri_for('/task/enqueue') %]">Enqueue</a></li>
 		<li><a href="#">Log</a></li>
 	</ul>
 </div>

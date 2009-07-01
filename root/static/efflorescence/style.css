@@ -320,3 +320,21 @@ table td.undecorated
 	background:none;
 
 }
+
+div#enqueue th,
+div#enqueue td
+{
+	border: none;
+	background: none;
+}
+
+div#enqueue th
+{
+	width:	150px;
+}
+
+textarea#options
+{
+	width:	100%;
+	height:	300px;
+}

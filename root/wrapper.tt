@@ -21,6 +21,12 @@
 		[% END %]
 
 		<link rel="stylesheet" type="text/css" href="/static/[% page.skin %]/style.css" media="screen, projection, tv " />
+		<!--<script src="/static/yui/build/yuiloader/yuiloader-min.js"></script>-->
+		<!--<script src="/static/yui/build/event/event-min.js"></script>-->
+		<!--<script src="/static/inputex/js/inputex-loader.js"></script>-->
+		<!--<script src="/static/catjax/prototype.js"></script>-->
+		<!--<script src="/static/catjax/catjax.js"></script>-->
+		<!--<script src="/static/scripts/hopkins.js"></script>-->
 	</head>
 
 	<body>
