@@ -45,7 +45,7 @@ sub enqueue : Local
 	}
 
 	$c->stash->{task}	= $task;
-	$c->stash->{tasks}	= \@tasks;
+	$c->stash->{tasks}	= [ sort @tasks ];
 }
 
 =back

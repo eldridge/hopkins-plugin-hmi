@@ -9,7 +9,7 @@
 		<tr>
 			<th>task</th>
 			<td>
-				<select name="task" onchange="document.getElementById('tasksel').task.value=this.options[this.selectedIndex].value; document.getElementById('tasksel').submit();">
+				<select id="task" name="task" onchange="document.getElementById('tasksel').task.value=this.options[this.selectedIndex].value; document.getElementById('tasksel').submit();">
 					[% FOREACH name = tasks %]
 						<option value="[% name %]" [% 'selected="selected"' IF c.req.params.task == name %]>[% name %]</option>
 					[% END %]

@@ -338,3 +338,8 @@ textarea#options
 	width:	100%;
 	height:	300px;
 }
+
+form#enqueue select#task
+{
+	width:	300px;
+}
