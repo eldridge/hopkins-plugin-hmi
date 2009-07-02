@@ -30,19 +30,18 @@ sub enqueue : Local
 	my $self	= shift;
 	my $c		= shift;
 
-	my @tasks	= $c->config->{hopkins}->config->get_task_names;
-	my $task	= $c->req->params->{task} || $tasks[0];
+	my $hopkins	= $c->config->{hopkins};
+	my @tasks	= $hopkins->config->get_task_names;
+	my $name	= $c->req->params->{task} || $tasks[0];
+	my $task	= $hopkins->config->get_task_info($name);
 
-	if (my $optsrc = $c->config->{optsrc}) {
-		my $ua	= new LWP::UserAgent;
-		my $uri	= new URI $optsrc;
+	if ($c->req->method eq 'POST') {
+		my $opts = $c->req->params;
+		my $task = delete $opts->{task};
 
-		$uri->query_form($uri->query_form, task => $task);
+		$hopkins->kernel->post(enqueue => $task => $opts);
 
-		my $res = $ua->get($uri);
-
-		$c->stash->{options}	= $res->content if $res->code == 200;
-		$c->stash->{optloaderr}	= 1 if $res->code != 200;
+		$c->detach('/status');
 	}
 
 	$c->stash->{task}	= $task;

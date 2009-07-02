@@ -2,7 +2,7 @@
 	<input type="hidden" name="task" />
 </form>
 
-<div id="enqueue">
+<form id="enqueue" method="POST">
 	<h2>enqueue a task</h2>
 
 	<table>
@@ -10,8 +10,8 @@
 			<th>task</th>
 			<td>
 				<select name="task" onchange="document.getElementById('tasksel').task.value=this.options[this.selectedIndex].value; document.getElementById('tasksel').submit();">
-					[% FOREACH task = tasks %]
-						<option value="[% task %]" [% 'selected="selected"' IF c.req.params.task == task %]>[% task %]</option>
+					[% FOREACH name = tasks %]
+						<option value="[% name %]" [% 'selected="selected"' IF c.req.params.task == name %]>[% name %]</option>
 					[% END %]
 				</select>
 			</td>
@@ -26,14 +26,30 @@
 		</div>
 	[% END %]
 
-	[% IF options %]
-		[% options %]
-	[% ELSE %]
-		<textarea id="options" name="options"></textarea>
-	[% END %]
+	<table>
+		[% FOREACH option = task.options %]
+			<tr>
+				<th>[% option.name %]</th>
+				<td>
+					[% SWITCH option.type %]
+						[% CASE 'bool' %]
+							<input type="checkbox" name="[% option.name %]" value="1" [% 'checked="checked"' IF option.value %] />
+						[% CASE 'combo' %]
+							<select name="[% option.name %]">
+								[% FOREACH choice = option.choices.all %]
+									<option value="[% choice.value %]">[% choice.name %]</option>
+								[% END %]
+							</select>
+						[% CASE %]
+							<input type="text" name="[% option.name %]" value="[% option.value %]" />
+					[% END %]
+				</td>
+			</tr>
+		[% END %]
+	</table>
 
 	<input class="submit" type="submit" value="enqueue" />
-</div>
+</form>
 
 <script type="text/javascript">
 	frm = new catjax.form;

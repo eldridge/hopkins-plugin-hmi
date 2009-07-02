@@ -321,14 +321,14 @@ table td.undecorated
 
 }
 
-div#enqueue th,
-div#enqueue td
+form#enqueue th,
+form#enqueue td
 {
 	border: none;
 	background: none;
 }
 
-div#enqueue th
+form#enqueue th
 {
 	width:	150px;
 }
