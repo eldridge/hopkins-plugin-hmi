@@ -85,7 +85,8 @@ sub status : Local
 	my $self	= shift;
 	my $c		= shift;
 
-	$c->stash->{hopkins} = $c->config->{hopkins};
+	$c->stash->{hopkins}	= $c->config->{hopkins};
+	$c->stash->{template}	= 'status.tt';
 }
 
 sub end : ActionClass('RenderView') { }

@@ -32,14 +32,14 @@ sub enqueue : Local
 
 	my $hopkins	= $c->config->{hopkins};
 	my @tasks	= $hopkins->config->get_task_names;
-	my $name	= $c->req->params->{task} || $tasks[0];
+	my $name	= $c->req->params->{name} || $tasks[0];
 	my $task	= $hopkins->config->get_task_info($name);
 
 	if ($c->req->method eq 'POST') {
 		my $opts = $c->req->params;
 		my $task = delete $opts->{task};
 
-		$hopkins->kernel->post(enqueue => $task => $opts);
+		$hopkins->kernel->post(manager => enqueue => $task => $opts);
 
 		$c->detach('/status');
 	}

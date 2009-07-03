@@ -1,5 +1,5 @@
 <form method="GET" id="tasksel">
-	<input type="hidden" name="task" />
+	<input type="hidden" name="name" />
 </form>
 
 <form id="enqueue" method="POST">
@@ -9,9 +9,9 @@
 		<tr>
 			<th>task</th>
 			<td>
-				<select id="task" name="task" onchange="document.getElementById('tasksel').task.value=this.options[this.selectedIndex].value; document.getElementById('tasksel').submit();">
+				<select id="task" name="task" onchange="document.getElementById('tasksel').name.value=this.options[this.selectedIndex].value; document.getElementById('tasksel').submit();">
 					[% FOREACH name = tasks %]
-						<option value="[% name %]" [% 'selected="selected"' IF c.req.params.task == name %]>[% name %]</option>
+						<option value="[% name %]" [% 'selected="selected"' IF c.req.params.name == name %]>[% name %]</option>
 					[% END %]
 				</select>
 			</td>
