@@ -133,6 +133,8 @@ sub handler
 	$res->content($obj->content);
 	$res->message('');
 
+	$req->header(Connection => 'close');
+
 	return RC_OK;
 }
 
