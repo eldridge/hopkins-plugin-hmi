@@ -46,7 +46,7 @@ sub enqueue : Local
 
 		$hopkins->kernel->post(manager => enqueue => $task => $opts => $args);
 
-		$c->detach('/status');
+		$c->res->redirect($c->uri_for('/status'));
 	}
 
 	$c->stash->{task}	= $task;

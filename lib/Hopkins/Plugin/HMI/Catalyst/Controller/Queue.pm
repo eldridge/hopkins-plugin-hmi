@@ -89,7 +89,12 @@ sub details : Local
 	my $c		= shift;
 	my $name	= shift;
 
-	$c->stash->{queue} = $c->config->{hopkins}->queue($name);
+	my $queue = $c->config->{hopkins}->queue($name);
+
+	$c->res->redirect($c->uri_for('/status')) if not defined $queue;
+
+	$c->stash->{queue}		= $queue;
+	$c->stash->{template}	= 'queue/details.tt';
 }
 
 =back
