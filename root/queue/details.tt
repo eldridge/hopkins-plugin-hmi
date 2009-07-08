@@ -2,8 +2,6 @@
 
 <h2>queue details for [% queue.name %]</h2>
 
-[% queue.error %]
-
 <table id="status">
 	<thead>
 		<tr>
@@ -14,14 +12,28 @@
 		</tr>
 	</thead>
 	<tbody>
+		[% IF queue.num_queued == 0 %]
+			<tr>
+				<td colspan="4">
+					no tasks in queue
+				</td>
+			</tr>
+		[% END %]
+		<tr>
 		[% FOREACH work = queue.tasks.Values %]
 			<tr>
 				<td>
 					<div style="float:left">[% work.task.name %]</div>
 					<div style="float:right">
-						<a href="[% c.uri_for('/work/cancel', work.id) %]" title="cancel [% work.task.name %]">
-							<img src="[% c.uri_for('/static/images/delete.png') %]" />
+						[% IF work.worker %]
+						<a href="[% c.uri_for('/work/stop', work.id) %]" title="stop [% work.task.name %]">
+							<img src="[% c.uri_for('/static/images/stop.png') %]" />
 						</a>
+						[% ELSE %]
+							<a href="[% c.uri_for('/work/cancel', work.id) %]" title="cancel [% work.task.name %]">
+								<img src="[% c.uri_for('/static/images/delete.png') %]" />
+							</a>
+						[% END %]
 						<a href="[% c.uri_for('/work/cancel', work.id) %]" title="show options">
 							<img src="[% c.uri_for('/static/images/bullet_arrow_down.png') %]" />
 						</a>
@@ -42,3 +54,9 @@
 		[% END %]
 	</tbody>
 </table>
+
+[% IF queue.error %]
+	<h2>last error</h2>
+	<div style="text-align: left;">[% queue.error %]</div>
+[% END %]
+

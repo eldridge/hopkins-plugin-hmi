@@ -1,3 +1,23 @@
+[% page.scripts.push('/static/yui/build/yahoo-dom-event/yahoo-dom-event.js') %]
+[% page.scripts.push('/static/yui/build/element/element-min.js') %]
+[% page.scripts.push('/static/yui/build/button/button-min.js') %]
+[% page.scripts.push('/static/yui/build/calendar/calendar-min.js') %]
+[% page.scripts.push('/static/yui/build/dragdrop/dragdrop-min.js') %]
+[% page.scripts.push('/static/yui/build/container/container-min.js') %]
+
+[% page.scripts.push('/static/scripts/task/enqueue.js') %]
+
+<style>
+#container_dialog .ft .button-group { text-align: center }
+#container_dialog .bd form { clear: left }
+#container_date { border: none; clear: both }
+#container_time { margin: auto; text-align: center; clear: both }
+#container_time select option { padding-right:10px; }
+
+/* Prevent border-collapse:collapse from bleeding through in IE6, IE7 */
+#container_dialog_c.yui-overlay-hidden table { *display:none; }
+</style>
+
 <form method="GET" id="tasksel">
 	<input type="hidden" name="name" />
 </form>
@@ -15,6 +35,17 @@
 					[% END %]
 				</select>
 			</td>
+		</tr>
+		<tr>
+			<th>date/time</th>
+			<td>
+				<input type="text" name="date_to_execute" id="date_to_execute" value="[% now %]" />
+				<img id="btn_date_to_execute" src="/static/images/time.png" style="cursor:pointer" />
+			</td>
+		</tr>
+		<tr>
+			<th>priority</th>
+			<td><input type="text" name="priority" value="5" /></td>
 		</tr>
 	</table>
 
@@ -50,25 +81,3 @@
 
 	<input class="submit" type="submit" value="enqueue" />
 </form>
-
-<script type="text/javascript">
-	frm = new catjax.form;
-	//frm.load('[% c.uri_for('/static/stuff.xml') %]');
-
-	document.getElementById('enqueue').appendChild(frm.getContainer());
-
-	evtLoaded.subscribe(function() {
-		new YAHOO.inputEx.Form( {
-			fields: [
-				{type: 'select', inputParams: {label: 'Title', name: 'title', selectValues: ['Mr','Mrs','Mme'] } },
-				{inputParams: {label: 'Firstname', name: 'firstname', required: true, value:'Jacques' } },
-				{inputParams: {label: 'Lastname', name: 'lastname', value:'Dupont' } },
-				{type:'email', inputParams: {label: 'Email', name: 'email'}},
-				{type:'url', inputParams: {label: 'Website',name:'website'}}
-			],
-			buttons: [{type: 'submit', value: 'Change'}],
-			parentEl: 'myFormContainer'
-		});
-	});
-</script>
-

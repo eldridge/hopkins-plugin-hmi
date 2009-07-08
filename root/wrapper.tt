@@ -1,9 +1,3 @@
-[% DEFAULT page.skin	= 'efflorescence' %]
-[% DEFAULT page.layout	= 'default' %]
-[% DEFAULT page.sidebar	= 'default' %]
-[% DEFAULT page.title	= '' %]
-[% DEFAULT page.refresh	= 0 %]
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -21,16 +15,14 @@
 		[% END %]
 
 		<link rel="stylesheet" type="text/css" href="/static/[% page.skin %]/style.css" media="screen, projection, tv " />
-		<!--<script src="/static/yui/build/yuiloader/yuiloader-min.js"></script>-->
-		<!--<script src="/static/yui/build/event/event-min.js"></script>-->
-		<!--<script src="/static/inputex/js/inputex-loader.js"></script>-->
-		<!--<script src="/static/catjax/prototype.js"></script>-->
-		<!--<script src="/static/catjax/catjax.js"></script>-->
-		<!--<script src="/static/scripts/hopkins.js"></script>-->
+		<link rel="stylesheet" type="text/css" href="/static/yui/build/assets/skins/sam/skin.css"/>
+
+		[% FOREACH script = page.scripts %]
+			<script type="text/javascript" src="[% script %]"></script>
+		[%- END %]
 	</head>
 
-	<body>
+	<body class="yui-skin-sam">
 		[% content WRAPPER "layout/${page.layout}.tt" %]
 	</body>
 </html>
-

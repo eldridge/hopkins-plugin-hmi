@@ -1,0 +1,6 @@
+[% DEFAULT page.skin	= 'efflorescence' %]
+[% DEFAULT page.layout	= 'default' %]
+[% DEFAULT page.sidebar	= 'default' %]
+[% DEFAULT page.title	= '' %]
+[% DEFAULT page.refresh	= 0 %]
+[% DEFAULT page.scripts	= [] %]

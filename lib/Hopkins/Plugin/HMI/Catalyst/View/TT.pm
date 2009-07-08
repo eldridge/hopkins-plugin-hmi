@@ -13,6 +13,7 @@ use strict;
 use base 'Catalyst::View::TT';
 
 __PACKAGE__->config({
+	PRE_PROCESS			=> 'bootstrap.tt',
 	WRAPPER				=> 'wrapper.tt',
 	TEMPLATE_EXTENSION	=> '.tt',
 	TIMER				=> 0,
