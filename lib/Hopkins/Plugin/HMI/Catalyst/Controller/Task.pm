@@ -36,10 +36,15 @@ sub enqueue : Local
 	my $task	= $hopkins->config->get_task_info($name);
 
 	if ($c->req->method eq 'POST') {
-		my $opts = $c->req->params;
-		my $task = delete $opts->{task};
+		my @keys = map { /^option_(.*)/ } keys %{ $c->req->params };
+		my $opts = { map { $_ => $c->req->params->{"option_$_"} } @keys };
+		my $task = $c->req->params->{task};
+		my $args = { };
 
-		$hopkins->kernel->post(manager => enqueue => $task => $opts);
+		$args->{priority}	= $c->req->params->{priority};
+		$args->{when}		= $c->req->params->{date_to_execute};
+
+		$hopkins->kernel->post(manager => enqueue => $task => $opts => $args);
 
 		$c->detach('/status');
 	}

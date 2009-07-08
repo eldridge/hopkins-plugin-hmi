@@ -64,15 +64,15 @@
 				<td>
 					[% SWITCH option.type %]
 						[% CASE 'bool' %]
-							<input type="checkbox" name="[% option.name %]" value="1" [% 'checked="checked"' IF option.value %] />
+							<input type="checkbox" name="option_[% option.name %]" value="1" [% 'checked="checked"' IF option.value %] />
 						[% CASE 'combo' %]
-							<select name="[% option.name %]">
+							<select name="option_[% option.name %]">
 								[% FOREACH choice = option.choices.all %]
 									<option value="[% choice.value %]">[% choice.name %]</option>
 								[% END %]
 							</select>
 						[% CASE %]
-							<input type="text" name="[% option.name %]" value="[% option.value %]" />
+							<input type="text" name="option_[% option.name %]" value="[% option.value %]" />
 					[% END %]
 				</td>
 			</tr>
