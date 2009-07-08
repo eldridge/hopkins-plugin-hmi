@@ -108,4 +108,6 @@ function onDateTimeOK()
 	if (da < 10) da = '0' + da;
 
 	obj.value = yr + '-' + mo + '-' + da + 'T' + hr + ':' + mn + ':' + '00';
+
+	dialog.hide();
 }
