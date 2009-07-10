@@ -1,22 +1,6 @@
-[% page.scripts.push('/static/yui/build/yahoo-dom-event/yahoo-dom-event.js') %]
-[% page.scripts.push('/static/yui/build/element/element-min.js') %]
-[% page.scripts.push('/static/yui/build/button/button-min.js') %]
-[% page.scripts.push('/static/yui/build/calendar/calendar-min.js') %]
-[% page.scripts.push('/static/yui/build/dragdrop/dragdrop-min.js') %]
-[% page.scripts.push('/static/yui/build/container/container-min.js') %]
-
+[% page.yui.push('button', 'calendar', 'container', 'slider') %]
 [% page.scripts.push('/static/scripts/task/enqueue.js') %]
-
-<style>
-#container_dialog .ft .button-group { text-align: center }
-#container_dialog .bd form { clear: left }
-#container_date { border: none; clear: both }
-#container_time { margin: auto; text-align: center; clear: both }
-#container_time select option { padding-right:10px; }
-
-/* Prevent border-collapse:collapse from bleeding through in IE6, IE7 */
-#container_dialog_c.yui-overlay-hidden table { *display:none; }
-</style>
+[% page.styles.push('enqueue.css') %]
 
 <form method="GET" id="tasksel">
 	<input type="hidden" name="name" />
@@ -45,7 +29,11 @@
 		</tr>
 		<tr>
 			<th>priority</th>
-			<td><input type="text" name="priority" value="5" /></td>
+			<td>
+				<input id="priority" type="hidden" name="priority" value="5" />
+				<div id="priority-slider-bg"><div id="priority-slider-thumb"><img src="/static/yui/build/slider/assets/thumb-n.gif" /></div></div>
+				<div id="priority-text"></div>
+			</td>
 		</tr>
 	</table>
 

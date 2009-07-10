@@ -6,32 +6,36 @@
 <table id="status">
 	<thead>
 		<tr>
-			<th>queue</th>
-			<th>status</th>
-			<th>concurrency</th>
-			<th>queued</th>
-			<th>load</th>
+			<th id="status_col1">name</th>
+			<th id="status_col2">status</th>
+			<th id="status_col3">queue</th>
+			<th id="status_col4">load</th>
 		</tr>
 	</thead>
 	<tbody>
 		[% FOREACH name = hopkins.queues.keys %]
+		[% SET queue = hopkins.queue(name) %]
 		<tr>
 			<td>
 				<div style="float:left">
-					[% SWITCH hopkins.queue(name).status_string %]
-						[% CASE 'idle' %][% SET color='gray' %]
-						[% CASE 'running' %][% SET color='green' %]
-						[% CASE 'running (frozen)' %][% SET color='yellow' %]
-						[% CASE 'halted' %][% SET color='orange' %]
-						[% CASE 'halted (frozen)' %][% SET color='red' %]
-						[% CASE %][% SET color='black' %]
-					[% END %]
 					<a href="[% c.uri_for('/queue/details', name) %]">
-						<span style="color: [% color %]">[% name %]</span>
+						<span style="color: black">[% name %]</span>
 					</a>
 				</div>
+				[% SWITCH queue.status_string %]
+					[% CASE 'idle' %][% SET color='black' %]
+					[% CASE 'running' %][% SET color='green' %]
+					[% CASE 'halted' %][% SET color='red' %]
+					[% CASE %][% SET color='black' %]
+				[% END %]
 				<div style="float:right">
-					[% IF hopkins.queue(name).halted %]
+					<img src="[% c.uri_for('/static/images/sphere-' _ color _ '.png') %]" />
+				</div>
+			</td>
+			<td>
+				[% queue.status_string %]
+				<div style="float:right">
+					[% IF queue.halted %]
 						<a href="[% c.uri_for('/queue/start', name) %]" title="start [% name %]">
 							<img src="[% c.uri_for('/static/images/control_play.png') %]" />
 						</a>
@@ -40,22 +44,25 @@
 							<img src="[% c.uri_for('/static/images/control_stop_blue.png') %]" />
 						</a>
 					[% END %]
-					[% IF hopkins.queue(name).frozen %]
-						<a href="[% c.uri_for('/queue/thaw', name) %]" title="thaw [% name %]">
-							<img src="[% c.uri_for('/static/images/basket_put.png') %]" />
+				</div>
+			</td>
+			<td>
+				[% queue.num_queued %] / [% queue.concurrency %]
+				[% '(frozen)' IF queue.frozen %]
+				<div style="float:right">
+					[% IF queue.frozen %]
+						<a href="[% c.uri_for('/queue/thaw', name) %]" title="currently not accepting new tasks; click to thaw [% name %]">
+							<img src="[% c.uri_for('/static/images/add.png') %]" />
 						</a>
 					[% ELSE %]
-						<a href="[% c.uri_for('/queue/freeze', name) %]" title="freeze [% name %]">
-							<img src="[% c.uri_for('/static/images/basket_delete.png') %]" />
+						<a href="[% c.uri_for('/queue/freeze', name) %]" title="currently accepting new tasks; click to freeze [% name %]">
+							<img src="[% c.uri_for('/static/images/delete.png') %]" />
 						</a>
 					[% END %]
 				</div>
 			</td>
-			<td>[% hopkins.queue(name).status_string %]</td>
-			<td>[% hopkins.queue(name).concurrency %]</td>
-			<td>[% hopkins.queue(name).num_queued %]</td>
 			<td>
-				[% SET load = hopkins.queue(name).num_queued / hopkins.queue(name).concurrency %]
+				[% SET load = queue.num_queued / queue.concurrency %]
 				[% SET load = load.printf('%.2f') %]
 				[% IF load > '1.00' %]
 					<span style="color: red">[% load %]</span>

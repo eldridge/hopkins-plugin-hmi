@@ -12,6 +12,8 @@ use strict;
 
 use base 'Catalyst::View::TT';
 
+use JSON;
+
 __PACKAGE__->config({
 	PRE_PROCESS			=> 'bootstrap.tt',
 	WRAPPER				=> 'wrapper.tt',
@@ -22,6 +24,8 @@ __PACKAGE__->config({
 });
 
 $Template::Stash::SCALAR_OPS->{printf} = sub { sprintf $_[1], $_[0] };
+
+$Template::Stash::LIST_OPS->{to_json} = sub { return to_json(shift, { allow_barekey => 1, allow_singlequote => 1} ) };
 
 
 =back

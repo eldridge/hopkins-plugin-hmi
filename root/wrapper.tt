@@ -9,16 +9,17 @@
 		<meta name="description" content="hopkins HMI" />
 		<meta name="robots" content="index, follow, noarchive" />
 		<meta name="googlebot" content="noarchive" />
-
 		[% IF page.refresh %]
-			<meta http-equiv="refresh" content="[% page.refresh %];url=[% c.req.uri %]" />
+		<meta http-equiv="refresh" content="[% page.refresh %];url=[% c.req.uri %]" />
 		[% END %]
 
-		<link rel="stylesheet" type="text/css" href="/static/[% page.skin %]/style.css" media="screen, projection, tv " />
-		<link rel="stylesheet" type="text/css" href="/static/yui/build/assets/skins/sam/skin.css"/>
+		[% FOREACH style = page.styles %]
+		<link rel="stylesheet" type="text/css" href="/static/[% page.skin %]/[% style %]" media="screen, projection, tv " />
+		[% END %]
 
+		<script type="text/javascript">var yuireq = [% page.yui.unique.to_json %];</script>
 		[% FOREACH script = page.scripts %]
-			<script type="text/javascript" src="[% script %]"></script>
+		<script type="text/javascript" src="[% script %]"></script>
 		[%- END %]
 	</head>
 

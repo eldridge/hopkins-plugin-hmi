@@ -6,6 +6,7 @@
 <table id="status">
 	<thead>
 		<tr>
+			<th>pri</th>
 			<th>task</th>
 			<th>status</th>
 			<th>queued</th>
@@ -15,7 +16,7 @@
 	<tbody>
 		[% IF queue.num_queued == 0 %]
 			<tr>
-				<td colspan="4">
+				<td colspan="5">
 					no tasks in queue
 				</td>
 			</tr>
@@ -23,6 +24,7 @@
 		<tr>
 		[% FOREACH work = queue.contents %]
 			<tr>
+				<td>[% work.priority %]</td>
 				<td>
 					<div style="float:left">[% work.task.name %]</div>
 					<div style="float:right">
@@ -35,9 +37,6 @@
 								<img src="[% c.uri_for('/static/images/delete.png') %]" />
 							</a>
 						[% END %]
-						<a href="[% c.uri_for('/work/cancel', work.id) %]" title="show options">
-							<img src="[% c.uri_for('/static/images/bullet_arrow_down.png') %]" />
-						</a>
 					</div>
 				</td>
 				<td>
@@ -47,9 +46,11 @@
 						<span style="color: orange">queued</span>
 					[% END %]
 				</td>
-				<td title="[% work.date_enqueued %]">[% now - work.date_enqueued %]</td>
-				<td>
-					[% work.date_started.iso8601 || '-' %]
+				<td title="[% work.date_enqueued || 'n/a' %]">
+					[% work.date_enqueued ? now - work.date_enqueued : 'n/a' %]
+				</td>
+				<td title="[% work.date_started || 'n/a' %]">
+					[% work.date_started ? now - work.date_started : 'n/a' %]
 				</td>
 			</tr>
 		[% END %]
@@ -57,7 +58,11 @@
 </table>
 
 [% IF queue.error %]
-	<h2>last error</h2>
-	<div style="text-align: left;">[% queue.error %]</div>
+	<h2><img src="/static/images/exclamation.png" style="margin-right: 10px" />last error</h2>
+	<div style="text-align: left;">
+		<ul style="margin-left: 0; padding-left: 0">
+			<li style="background: url([% c.uri_for('/static/images/error.png') %]) no-repeat; padding-left: 20px; list-style: none" >[% queue.error %]</li>
+		</ul>
+	</div>
 [% END %]
 
