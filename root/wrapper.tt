@@ -9,7 +9,7 @@
 		<meta name="description" content="hopkins HMI" />
 		<meta name="robots" content="index, follow, noarchive" />
 		<meta name="googlebot" content="noarchive" />
-		[% IF page.refresh %]
+		[% IF 0 && page.refresh %]
 		<meta http-equiv="refresh" content="[% page.refresh %];url=[% c.req.uri %]" />
 		[% END %]
 

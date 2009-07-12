@@ -2,17 +2,16 @@
 	<h1>hopkins HMI</h1>
 </div>
 
-<div id="menu">
-	<ul>
-		<li class="first"><a href="[% c.uri_for('/status') %]">Status</a></li>
-		<li><a href="[% c.uri_for('/task/enqueue') %]">Enqueue</a></li>
-		<li><a href="#">Log</a></li>
-	</ul>
-</div>
+<div id="body">
+	<div id="menu">
+		<ul>
+			<li class="first"><a href="[% c.uri_for('/status') %]">Status</a></li>
+			<li class="last"><a href="[% c.uri_for('/task/enqueue') %]">Enqueue</a></li>
+		</ul>
+	</div>
 
-<div id="page">
-	<div id="page-top">
-		<div id="page-bottom">
+	<div id="body-top">
+		<div id="body-bottom">
 			<div>
 				<div id="sidebar">
 					[% PROCESS "sidebar/${page.sidebar}.tt" %]
@@ -21,11 +20,14 @@
 					[% content %]
 				</div>
 			</div>
-			<div style="clear: both;">&nbsp;</div>
+			<br />
 		</div>
+	</div>
+
+	<div id="tail">
+		<span class="version">
+			Hopkins/HMI [% version.plugin.hmi %]; Hopkins [% version.hopkins %]
+		<span>
 	</div>
 </div>
 
-<div id="footer">
-	<p>Template Designed by <a href="http://www.thewebhub.com">TheWebHub.com</a>.</p>
-</div>

@@ -2,14 +2,14 @@
 	<h1>hopkins HMI</h1>
 </div>
 
-<div id="menu">
-	<strong>[% page.modal %]</strong>
-</div>
+<div id="body">
+	<div id="menu">
+		<strong>[% page.modal %]</strong>
+	</div>
 
-<div id="page" class="modal">
-	[% content %]
-</div>
+	<div id="body-top" class="modal">
+		[% content %]
+	</div>
 
-<div id="footer">
-	<p>Template Designed by <a href="http://www.thewebhub.com">TheWebHub.com</a>.</p>
+	<div id="tail"></div>
 </div>

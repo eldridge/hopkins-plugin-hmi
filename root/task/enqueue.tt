@@ -7,11 +7,11 @@
 </form>
 
 <form id="enqueue" method="POST">
-	<h2>enqueue a task</h2>
+	<h2>Enqueue a Task</h2>
 
 	<table>
 		<tr>
-			<th>task</th>
+			<th>Task</th>
 			<td>
 				<select id="task" name="task" onchange="document.getElementById('tasksel').name.value=this.options[this.selectedIndex].value; document.getElementById('tasksel').submit();">
 					[% FOREACH name = tasks %]
@@ -21,14 +21,14 @@
 			</td>
 		</tr>
 		<tr>
-			<th>date/time</th>
+			<th>Date/Time</th>
 			<td>
 				<input type="text" name="date_to_execute" id="date_to_execute" value="[% now %]" />
 				<img id="btn_date_to_execute" src="/static/images/time.png" style="cursor:pointer" />
 			</td>
 		</tr>
 		<tr>
-			<th>priority</th>
+			<th>Priority</th>
 			<td>
 				<input id="priority" type="hidden" name="priority" value="5" />
 				<div id="priority-slider-bg"><div id="priority-slider-thumb"><img src="/static/yui/build/slider/assets/thumb-n.gif" /></div></div>
@@ -37,10 +37,10 @@
 		</tr>
 	</table>
 
-	<h2>options</h2>
+	<h2>Options</h2>
 	[% IF optloaderr %]
 		<div>
-			an option source was set, but an error occurred while 
+			An option source was set, but an error occurred while 
 			attempting to retrieve them.
 		</div>
 	[% END %]

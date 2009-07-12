@@ -1,4 +1,4 @@
-[% DEFAULT page.skin	= 'efflorescence'	%]
+[% DEFAULT page.skin	= 'slate'	%]
 [% DEFAULT page.layout	= 'default'			%]
 [% DEFAULT page.sidebar	= 'default'			%]
 [% DEFAULT page.title	= ''				%]

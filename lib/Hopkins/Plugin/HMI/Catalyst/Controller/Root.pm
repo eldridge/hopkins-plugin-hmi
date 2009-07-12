@@ -34,6 +34,12 @@ sub auto : Private
 	$c->stash->{host}	= fqdn;
 	$c->stash->{now}	= DateTime->now(time_zone => 'local');
 
+	$c->stash->{version} =
+	{
+		hopkins	=> $Hopkins::VERSION,
+		plugin	=> { hmi => $Hopkins::Plugin::HMI::VERSION }
+	};
+
 	$c->detach('login') if not defined $c->user;
 
 	1;

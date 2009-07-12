@@ -1,0 +1,114 @@
+form#login
+{
+	margin-top:		15px;
+	margin-left:	75px;
+	margin-right:	75px;
+	margin-top:		50px;
+}
+
+form#login fieldset
+{
+	border: none;
+}
+
+form#login fieldset input
+{
+	background-color:	rgb(198, 226, 255);
+	border:				1px solid rgb(54, 100, 139);
+	float:				right;
+	width:				190px;
+}
+
+form#login fieldset label
+{
+	line-height:	1.5em;
+	font-weight:	bold;
+	float:			left;
+}
+
+form#login fieldset input.submit,
+input.submit
+{
+	color:				#222;
+	background-color:	#ffc373;
+	border:				1px solid rgb(54, 100, 139);
+	padding:			0px 5px;
+	width:				auto;
+}
+
+form#login fieldset label.error
+{
+	font-weight:		normal;
+}
+
+#content {
+	float: right;
+	width: 420px;
+	padding: 40px 50px 30px 60px;
+	min-height: 600px;
+}
+
+#content-min {
+	float: right;
+	width: 420px;
+	padding: 40px 50px 30px 60px;
+}
+
+#content h2,
+#content-min h2 {
+	margin: 0;
+	padding: 20px 0 10px 0;
+	border-bottom: 1px dotted #CFCFCF;
+	text-transform: lowercase;
+	font-size: 24px;
+	font-weight: normal;
+}
+
+#sidebar {
+	float: left;
+	width: 250px;
+	padding: 20px 0 0 20px;
+}
+
+#sidebar h2 {
+	margin: 0;
+	padding: 20px 0 10px 0;
+	border-bottom: 1px dotted #CFCFCF;
+	text-transform: lowercase;
+	font-size: 24px;
+	font-weight: normal;
+}
+
+#sidebar ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#sidebar li {
+	margin: 0;
+	padding: 10px 0;
+	border-bottom: 1px dotted #CFCFCF;
+}
+/** Footer Style Starts Here */
+
+#footer {
+	width: 800px;
+	height: 43px;
+	margin: 0 auto;
+	padding: 0 0 20px 0;
+	background: url(images/image02.jpg) no-repeat left top;
+}
+
+#footer p {
+	margin: 0;
+	padding: 8px 0 0 0;
+	text-align: center;
+	font-size: 11px;
+	color: #FFFFFF;
+}
+
+#footer a {
+	color: #FFFFFF;
+}
+
