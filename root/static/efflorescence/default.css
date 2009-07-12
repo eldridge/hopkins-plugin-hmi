@@ -325,3 +325,6 @@ table td.undecorated
 	background:none;
 
 }
+
+.left { float: left }
+.right { float: right }

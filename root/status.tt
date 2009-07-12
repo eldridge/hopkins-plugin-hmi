@@ -17,7 +17,7 @@
 		[% SET queue = hopkins.queue(name) %]
 		<tr>
 			<td>
-				<div style="float:left">
+				<div class="left">
 					<a href="[% c.uri_for('/queue/details', name) %]">
 						<span style="color: black">[% name %]</span>
 					</a>
@@ -28,13 +28,13 @@
 					[% CASE 'halted' %][% SET color='red' %]
 					[% CASE %][% SET color='black' %]
 				[% END %]
-				<div style="float:right">
+				<div class="right">
 					<img src="[% c.uri_for('/static/images/sphere-' _ color _ '.png') %]" />
 				</div>
 			</td>
 			<td>
-				[% queue.status_string %]
-				<div style="float:right">
+				<div class="left">[% queue.status_string %]</div>
+				<div class="right">
 					[% IF queue.halted %]
 						<a href="[% c.uri_for('/queue/start', name) %]" title="start [% name %]">
 							<img src="[% c.uri_for('/static/images/control_play.png') %]" />
@@ -47,9 +47,11 @@
 				</div>
 			</td>
 			<td>
-				[% queue.num_queued %] / [% queue.concurrency %]
-				[% '(frozen)' IF queue.frozen %]
-				<div style="float:right">
+				<div class="left">
+					[% queue.num_queued %] / [% queue.concurrency %]
+					[% '(frozen)' IF queue.frozen %]
+				</div>
+				<div class="right">
 					[% IF queue.frozen %]
 						<a href="[% c.uri_for('/queue/thaw', name) %]" title="currently not accepting new tasks; click to thaw [% name %]">
 							<img src="[% c.uri_for('/static/images/add.png') %]" />
