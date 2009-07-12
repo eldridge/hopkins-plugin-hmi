@@ -14,7 +14,7 @@
 		[% END %]
 
 		[% FOREACH style = page.styles %]
-		<link rel="stylesheet" type="text/css" href="/static/[% page.skin %]/[% style %]" media="screen, projection, tv " />
+		<link rel="stylesheet" type="text/css" href="/static/skins/[% page.skin %]/[% style %]" media="screen, projection, tv " />
 		[% END %]
 
 		<script type="text/javascript">var yuireq = [% page.yui.unique.to_json %];</script>
