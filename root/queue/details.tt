@@ -3,7 +3,7 @@
 
 <h2>Queue Details for [% queue.name %]</h2>
 
-<table id="status">
+<table id="status" class="table" width="500">
 	<thead>
 		<tr>
 			<th>Pri</th>
@@ -22,7 +22,7 @@
 			</tr>
 		[% END %]
 		<tr>
-		[% FOREACH work = queue.contents %]
+		[% FOREACH work = queue.contents(executing => now) %]
 			<tr>
 				<td>[% work.priority %]</td>
 				<td>

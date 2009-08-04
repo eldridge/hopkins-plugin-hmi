@@ -24,6 +24,10 @@
 	</head>
 
 	<body class="yui-skin-sam">
+		<div id="header">
+			<h1>Hopkins HMI</h1>
+		</div>
+
 		[% content WRAPPER "layout/${page.layout}.tt" %]
 	</body>
 </html>

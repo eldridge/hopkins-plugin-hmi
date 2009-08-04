@@ -27,7 +27,7 @@ h4 { font-size: 1em }
 
 h2
 {
-	padding:		20px 0 10px 0;
+	padding:		5px 0 10px 0;
 	border-bottom:	1px dotted #ccc;
 	text-transform:	lowercase;
 	font-weight:	normal;
@@ -50,27 +50,52 @@ hr
 
 /* table styles */
 
-table
+table#layout tr td
+{
+	background:		none;
+	border:			none;
+	vertical-align:	top;
+}
+
+table#layout tr td#sidebar
+{
+	width:			250px;
+	padding:		0 20px;
+	border-right:	1px solid #888;
+}
+
+table#layout tr td#content
+{
+	width:			450px;
+	padding:		0 20px;
+}
+
+table#layout tr td#content table
 {
 	margin:				1em 0;
 	width:				100%;
 	border-collapse:	collapse;
 }
+table tr th { padding-top: 0 }
 
-table tr th,
-table tr td
+table tr th
+{
+	text-align:		left;
+}
+
+table#layout tr td#content table.table tr th,
+table#layout tr td#content table.table tr td
 {
 	border:			1px solid rgb(54, 100, 139);
 	padding:		1px 3px;
 	line-height:	1.5em;
-	text-align:		left;
 	text-transform:	lowercase;
 }
 
-table tbody tr td { background-color: #ffd }
-table thead tr th { background-color: #ffc373 }
+table#layout tr td#content table.table tbody tr td { background-color: #ffd }
+table#layout tr td#content table.table thead tr th { background-color: #ffc373 }
 
-table img { vertical-align: -25% }
+table#layout tr td#content table.table img { vertical-align: -25% }
 
 /* common element-agnostic styles */
 
@@ -101,15 +126,23 @@ table img { vertical-align: -25% }
 
 #menu
 {
-	width:		800px;
-	height:		38px;
-	padding:	0 20px;
-	background:	url(images/menu.png) no-repeat left top;
+	width:			800px;
+	height:			40px;
+	background:		url(images/menu.png) no-repeat left top;
+	border-bottom:	5px solid #aaa;
+}
+
+#menu strong
+{
+	color:			#fff;
+	font-size:		1.5em;
+	padding:		8px 20px;
+	display:		block;
 }
 
 #menu ul
 {
-	margin:		0;
+	margin:		0 25px;
 	list-style:	none;
 	padding:	10px 0;
 }
@@ -148,7 +181,8 @@ table img { vertical-align: -25% }
 
 #body-top
 {
-	background:	#fff url(imagses/page-bg.png) no-repeat center;
+	background:		#fff url(imagses/page-bg.png) no-repeat center;
+	padding-top:	20px;
 }
 
 #tail
@@ -163,32 +197,6 @@ table img { vertical-align: -25% }
 	color:			#aaa;
 	margin-right:	20px;
 	text-transform:	lowercase;
-}
-
-#content
-{
-	float:			right;
-	width:			470px;
-	margin:			20px 0 0 0;
-	padding:		0 20px;
-	border-left:	1px solid #888;
-	min-height:		300px;
-}
-
-#content-min
-{
-	float:			right;
-	width:			470px;
-	margin:			20px 0 0 0;
-	padding:		0 20px;
-	border-left:	1px solid #888;
-}
-
-#sidebar
-{
-	float:		left;
-	width:		250px;
-	padding:	20px 0 0 20px;
 }
 
 #sidebar ul

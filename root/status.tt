@@ -5,7 +5,7 @@
 
 <h2>queue overview</h2>
 
-<table id="status">
+<table id="status" class="table">
 	<thead>
 		<tr>
 			<th id="status_col1">name</th>
