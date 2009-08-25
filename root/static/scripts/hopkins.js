@@ -4,7 +4,6 @@ var loader = new YAHOO.util.YUILoader({
 	base:			'/static/yui/build/',
 	require:		yuireq,
 	loadOptional:	false,
-	combine:		true,
 	filter:			'MIN',
 	allowRollup:	true,
 	onSuccess:		function()

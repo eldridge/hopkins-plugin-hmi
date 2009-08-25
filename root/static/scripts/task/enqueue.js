@@ -9,6 +9,8 @@
 
 		slider.subscribe('change', onPriorityChange);
 		slider.setValue(80);
+
+		new YAHOO.widget.Button('submit');
 	});
 
 	function create_dialog()

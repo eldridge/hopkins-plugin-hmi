@@ -26,14 +26,9 @@ form#login fieldset label
 	float:			left;
 }
 
-form#login fieldset input.submit,
-input.submit
+form#login fieldset span#submit
 {
-	color:				#222;
-	background-color:	#ffc373;
-	border:				1px solid rgb(54, 100, 139);
-	padding:			0px 5px;
-	width:				auto;
+	float:			right;
 }
 
 form#login fieldset label.error

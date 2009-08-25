@@ -1,3 +1,5 @@
+[% page.yui.push('button') %]
+[% page.scripts.push('/static/scripts/login.js') %]
 [% page.styles.push('login.css') %]
 
 [% page.modal	= 'authentication required' %]
@@ -20,6 +22,6 @@
 		[% IF error %]
 			<label class="error">[% error %]</label>
 		[% END %]
-		<input class="submit" type="submit" value="login" />
+		<button type="button" id="submit" name="submit" value="login">login</button>
 	</fieldset>
 </form>

@@ -23,7 +23,7 @@
 		[%- END %]
 	</head>
 
-	<body class="yui-skin-sam">
+	<body id="root" class="yui-skin-sam">
 		<div id="header">
 			<h1>Hopkins HMI</h1>
 		</div>

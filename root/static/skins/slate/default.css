@@ -213,3 +213,8 @@ table#layout tr td#content table.table img { vertical-align: -25% }
 	border-bottom:	1px dotted #ccc;
 }
 
+body#root span.yui-button-hover,
+body#root span.yui-button-hover span
+{
+	border-color:	#b08c5e;
+}
