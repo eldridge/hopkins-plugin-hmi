@@ -16,12 +16,11 @@
 	<tbody>
 		[% IF queue.num_queued == 0 %]
 			<tr>
-				<td colspan="5">
-					No tasks in queue
+				<td colspan="5" class="alert">
+					Queue is empty
 				</td>
 			</tr>
 		[% END %]
-		<tr>
 		[% FOREACH work = queue.contents(executing => now) %]
 			<tr>
 				<td>[% work.priority %]</td>

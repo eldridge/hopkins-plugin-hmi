@@ -67,5 +67,5 @@
 		[% END %]
 	</table>
 
-	<button type="submit" id="submit" name="submit" value="enqueue">enqueue</button>
+	<button type="submit" id="button_enqueue" value="enqueue">enqueue</button>
 </form>

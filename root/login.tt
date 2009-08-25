@@ -22,6 +22,6 @@
 		[% IF error %]
 			<label class="error">[% error %]</label>
 		[% END %]
-		<button type="button" id="submit" name="submit" value="login">login</button>
+		<button type="button" id="button_login" value="login">login</button>
 	</fieldset>
 </form>

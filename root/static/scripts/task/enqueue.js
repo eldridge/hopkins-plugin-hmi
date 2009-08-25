@@ -10,8 +10,15 @@
 		slider.subscribe('change', onPriorityChange);
 		slider.setValue(80);
 
-		new YAHOO.widget.Button('submit');
+		var button = new YAHOO.widget.Button('button_enqueue');
+
+		button.subscribe('click', onEnqueueClick);
 	});
+
+	function onEnqueueClick()
+	{
+		YAHOO.util.Dom.get('enqueue').submit();
+	}
 
 	function create_dialog()
 	{

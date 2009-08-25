@@ -26,7 +26,7 @@ form#login fieldset label
 	float:			left;
 }
 
-form#login fieldset span#submit
+form#login fieldset span#button_login
 {
 	float:			right;
 }

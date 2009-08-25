@@ -75,25 +75,34 @@ table#layout tr td#content table
 	margin:				1em 0;
 	width:				100%;
 	border-collapse:	collapse;
+	border:			1px solid #b08c5e;
 }
-table tr th { padding-top: 0 }
 
 table tr th
 {
-	text-align:		left;
-}
-
-table#layout tr td#content table.table tr th,
-table#layout tr td#content table.table tr td
-{
-	border:			1px solid rgb(54, 100, 139);
 	padding:		1px 3px;
 	line-height:	1.5em;
 	text-transform:	lowercase;
+	border:			1px solid #b08c5e;
+	text-align:		left;
 }
 
-table#layout tr td#content table.table tbody tr td { background-color: #ffd }
-table#layout tr td#content table.table thead tr th { background-color: #ffc373 }
+table#layout tr td#content table.table tr td
+{
+	padding:		1px 3px;
+	line-height:	1.5em;
+	text-transform:	lowercase;
+	border:			1px dotted #ccc;
+}
+
+table.table tbody tr td.alert
+{
+	text-align:		center;
+	font-size:		1.5em;
+}
+
+table#layout tr td#content table.table tbody tr td { background-color: #ffe }
+table#layout tr td#content table.table thead tr th { background-color: #e6bf8c }
 
 table#layout tr td#content table.table img { vertical-align: -25% }
 
