@@ -18,6 +18,12 @@ br { clear: both }
 h1, ul, p	{ margin: 1.5em 0 0 0 }
 ul			{ margin: 0 0 3em 0 }
 
+/* common classes */
+
+.good { color: green }
+.bad { color: red }
+.warn { color: orange }
+
 /* text headers */
 
 h1 { font-size: 3.5em }
@@ -48,6 +54,19 @@ hr
 	margin-bottom:			5px;
 }
 
+/* definition lists */
+
+dt
+{
+	width:			100px;
+	float:			left;
+	font-weight:	bold;
+}
+
+dd
+{
+}
+
 /* table styles */
 
 table#layout tr td
@@ -70,15 +89,20 @@ table#layout tr td#content
 	padding:		0 20px;
 }
 
-table#layout tr td#content table
+table#layout tr td#content table.table
 {
 	margin:				1em 0;
 	width:				100%;
 	border-collapse:	collapse;
-	border:			1px solid #b08c5e;
+	border:				1px solid #b08c5e;
 }
 
 table tr th
+{
+	text-align:		left;
+}
+
+table#layout tr td#content table.table tr th
 {
 	padding:		1px 3px;
 	line-height:	1.5em;
@@ -95,7 +119,7 @@ table#layout tr td#content table.table tr td
 	border:			1px dotted #ccc;
 }
 
-table.table tbody tr td.alert
+table#layout tr td#content table.table tbody tr td.alert
 {
 	text-align:		center;
 	font-size:		1.5em;

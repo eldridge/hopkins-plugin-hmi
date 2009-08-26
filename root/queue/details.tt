@@ -3,6 +3,25 @@
 
 <h2>Queue Details for [% queue.name %]</h2>
 
+<dl>
+	<dt>Running</dt>
+	<dd class="[% queue.halted ? 'bad' : 'good' %]">
+		[% queue.status_string %]
+	</dd>
+
+	<dt>Available</dt>
+	<dd class="[% queue.frozen ? 'bad' : 'good' %]">
+		[% queue.frozen ? 'no' : 'yes' %]
+	</dd>
+
+	<dt>Concurrency</dt>
+	<dd>[% queue.concurrency %]</dd>
+</dl>
+
+<br />
+
+<h2>Contents</h2>
+
 <table id="status" class="table" width="500">
 	<thead>
 		<tr>
