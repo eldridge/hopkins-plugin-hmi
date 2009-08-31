@@ -11,6 +11,7 @@ use warnings;
 =cut
 
 use Catalyst;
+use File::ShareDir;
 
 # fuck catalyst and its compile-time bullshit
 
@@ -21,6 +22,22 @@ use Hopkins::Plugin::HMI::Log;
 
 __PACKAGE__->setup(qw/Authentication Session Session::Store::FastMmap Session::State::Cookie Static::Simple/);
 __PACKAGE__->log(new Hopkins::Plugin::HMI::Log);
+
+sub setup_home
+{
+	my $self = shift;
+
+	$self->next::method(@_);
+
+	my $share = eval { File::ShareDir::dist_dir('Hopkins-Plugin-HMI') . '/root' };
+	my $local = Hopkins::Plugin::HMI::Catalyst->path_to('share/root');
+
+	my $root = -d $local ? $local : $share;
+
+	die 'unable to determine template location' if not $root;
+
+	$self->config->{root} = $root;
+}
 
 =back
 
