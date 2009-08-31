@@ -17,6 +17,7 @@ requires 'Hopkins' => '0.900';
 requires 'Class::Accessor::Fast'						=> '0.31';
 requires 'POE::Component::Server::HTTP'					=> '0.09';
 requires 'Sys::Hostname::FQDN'							=> '0.10';
+requires 'Catalyst::Action::RenderView'					=> '0.08';
 requires 'Catalyst::Engine::Embeddable'					=> '0.000002';
 requires 'Catalyst::Plugin::Authentication'				=> '0.100092';
 requires 'Catalyst::Plugin::Session'					=> '0.24';
