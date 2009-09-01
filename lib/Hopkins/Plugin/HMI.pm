@@ -95,7 +95,7 @@ sub handler
 
 	if (not defined $obj or $code == 500) {
 		my $template	= new Template;
-		my $stash		= { errors => \@err };
+		my $stash		= { errors => \@err, version => $Hopkins::Plugin::HMI::VERSION };
 		my $output		= '';
 
 		$template->process(\$self->errmsg, $stash, \$output);
@@ -218,7 +218,7 @@ __DATA__
 					</p>
 				[% END %]
 			</div>
-			<span>Hopkins::Plugin::HMI 0.900</span>
+			<span>Hopkins::Plugin::HMI [% version %]</span>
 		</div>
 	</body>
 </html>
