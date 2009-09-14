@@ -48,6 +48,8 @@ sub setup_home
 {
 	package Catalyst::Engine::Embeddable;
 
+	no warnings 'redefine';
+
 	sub prepare_request {
 		my ($self, $c, $req, $res_ref, $err_ref) = @_;
 		$c->req->{_engine_embeddable}{req} = $req;
@@ -74,6 +76,8 @@ sub setup_home
 
 		$c->res->status(500);
 	}
+
+	use warnings 'redefine';
 }
 
 =back
