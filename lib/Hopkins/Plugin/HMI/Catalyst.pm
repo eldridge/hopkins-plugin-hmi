@@ -41,45 +41,6 @@ sub setup_home
 	$self->config->{root} = $root;
 }
 
-# override Catalyst::Engine::Embeddable to make fixes to the
-# engine.  i've attempted to push these fixes upstream, but
-# the maintainer won't respond.
-
-{
-	package Catalyst::Engine::Embeddable;
-
-	no warnings 'redefine';
-
-	sub prepare_request {
-		my ($self, $c, $req, $res_ref, $err_ref) = @_;
-		$c->req->{_engine_embeddable}{req} = $req;
-		$c->req->{_engine_embeddable}{res} = $res_ref;
-		$c->req->{_engine_embeddable}{err} = $err_ref;
-		$c->req->method($req->method);
-	}
-
-	sub prepare_path {
-		my ($self, $c) = @_;
-
-		my $uri = $c->req->{_engine_embeddable}{req}->uri();
-		my $base = $uri->clone; $base->path('/'); $base->path_query('');
-
-		$c->req->uri($uri);
-		$c->req->base($base);
-	}
-
-	sub finalize_error
-	{
-		my ($self, $c) = @_;
-
-		@{ $c->req->{_engine_embeddable}->{err} } = @{ $c->error };
-
-		$c->res->status(500);
-	}
-
-	use warnings 'redefine';
-}
-
 =back
 
 =head1 AUTHOR
