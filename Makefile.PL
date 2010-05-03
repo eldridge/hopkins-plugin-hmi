@@ -23,6 +23,9 @@ requires 'Catalyst::Engine::Embeddable'					=> '0.000003';
 requires 'Catalyst::Plugin::Authentication'				=> '0.100092';
 requires 'Catalyst::Plugin::Session'					=> '0.24';
 requires 'Catalyst::Plugin::Session::Store::FastMmap'	=> '0.11';
+requires 'Catalyst::Plugin::Session::State::Cookie'		=> '0.17';
+requires 'Catalyst::Plugin::Static::Simple'				=> '0.29';
+requires 'Catalyst::View::TT'							=> '0.34';
 
 # required for the test suite
 #test_requires 'Class::Accessor::Fast';
