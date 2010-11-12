@@ -3,8 +3,6 @@ package Hopkins::Plugin::HMI;
 use strict;
 use warnings;
 
-our $VERSION = '0.900_01';
-
 =head1 NAME
 
 Hopkins::Plugin::HMI - hopkins HMI session (using HTTP)

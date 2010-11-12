@@ -1,4 +1,5 @@
-package Hopkins::Plugin::HMI::Catalyst::Controller::Root;
+package # hide from PAUSE
+	Hopkins::Plugin::HMI::Catalyst::Controller::Root;
 
 use strict;
 use warnings;

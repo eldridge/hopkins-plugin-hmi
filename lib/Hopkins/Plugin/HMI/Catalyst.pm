@@ -1,10 +1,12 @@
-package Hopkins::Plugin::HMI::Catalyst;
+package # hide from PAUSE
+	Hopkins::Plugin::HMI::Catalyst;
 
 use strict;
 use warnings;
 
 =head1 NAME
 
+Hopkins::Plugin::HMI::Catalyst - Catalyst application
 
 =head1 DESCRIPTION
 
@@ -15,12 +17,11 @@ use Catalyst::Engine::Embeddable;
 
 use File::ShareDir;
 
-# fuck catalyst and its compile-time bullshit
+# catalyst compile-time fuckery
 
 __PACKAGE__->config(%$Hopkins::Plugin::HMI::catalyst);
 
 use Hopkins::Plugin::HMI::Log;
-#use Catalyst::Log::Log4perl;
 
 __PACKAGE__->setup(qw/Authentication Session Session::Store::FastMmap Session::State::Cookie Static::Simple/);
 __PACKAGE__->log(new Hopkins::Plugin::HMI::Log);
@@ -40,8 +41,6 @@ sub setup_home
 
 	$self->config->{root} = $root;
 }
-
-=back
 
 =head1 AUTHOR
 

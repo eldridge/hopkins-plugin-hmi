@@ -1,4 +1,5 @@
-package Hopkins::Plugin::HMI::Log;
+package # hide from PAUSE
+	Hopkins::Plugin::HMI::Log;
 
 use strict;
 use warnings;
