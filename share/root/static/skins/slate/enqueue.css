@@ -30,18 +30,14 @@ form#enqueue select#task
 /* Prevent border-collapse:collapse from bleeding through in IE6, IE7 */
 #container_dialog_c.yui-overlay-hidden table { *display:none; }
 
-#priority-slider-bg
+#priority-slider
 {
-	background: url(/static/yui/build/slider/assets/bg-fader.gif) 5px 0 no-repeat;
-	width:		170px;
 	position:	relative;
-	left:		-7px;
 	float:		left;
 }
 
 #priority-text
 {
-	padding-top:	4px;
-	margin-left:	5px;
+	margin-left:	10px;
 	float:			left;
 }

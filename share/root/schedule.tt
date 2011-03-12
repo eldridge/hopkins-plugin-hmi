@@ -1,0 +1,5 @@
+[% page.layout = 'wide' %]
+
+<h2>Schedule</h2>
+
+<img src="[% c.uri_for('/schedule/image') %]" />

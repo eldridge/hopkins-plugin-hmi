@@ -1,481 +1,623 @@
 /*
-Copyright (c) 2009, Yahoo! Inc. All rights reserved.
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.net/yui/license.txt
-version: 2.7.0
+http://developer.yahoo.com/yui/license.html
+version: 3.3.0
+build: 3167
 */
+YUI.add('imageloader', function(Y) {
+
 /**
- * The image loader is a framework to dynamically load images
- * according to certain triggers, enabling faster load times
- * and a more responsive UI.
+ * The ImageLoader Utility is a framework to dynamically load images according to certain triggers,
+ * enabling faster load times and a more responsive UI.
  *
  * @module imageloader
- * @namespace YAHOO.util
+ * @requires base-base, node-style, node-screen
  */
 
-if (typeof(YAHOO.util.ImageLoader) == 'undefined') {
-	YAHOO.util.ImageLoader = {};
-}
-
-/**
- * A group for images. A group can have one time limit and a series of triggers. Thus the images belonging to this group must share these constraints.
- * @class YAHOO.util.ImageLoader.group
- * @requires YAHOO.util.Dom
- * @requires YAHOO.util.Event
- * @constructor
- * @param {String|HTMLElement}	trigEl	The HTML element id or reference to assign the trigger event to. Can be null for no trigger
- * @param {String}	trigAct The type of event to assign to trigEl. Can be null for no trigger
- * @param {Number}	timeout	Timeout (time limit) length, in seconds. Can be undefined, or <= 0, for no time limit
- */
-YAHOO.util.ImageLoader.group = function(trigEl, trigAct, timeout) {
-	/**
-	 * Name for the group. Only used to identify the group in logging statements
-	 * @property name
-	 * @type String
-	 */
-	this.name = 'unnamed';
-	
-	/**
-	 * Collection of images registered with this group
-	 * @property _imgObjs
-	 * @private
-	 * @type Object
-	 */
-	this._imgObjs = {};
-	
-	/**
-	 * Timeout (time limit) length, in seconds
-	 * @property timeoutLen
-	 * @type Number
-	 */
-	this.timeoutLen = timeout;
-	
-	/**
-	 * Timeout object to keep a handle on the time limit
-	 * @property _timeout
-	 * @private
-	 * @type Object
-	 */
-	this._timeout = null;
-	
-	/**
-	 * Collection of triggers for this group.
-	 * Keeps track of each trigger's element, event, and event-listener-callback "fetch" function
-	 * @property _triggers
-	 * @private
-	 * @type Array
-	 */
-	this._triggers = [];
 
 	/**
-	 * Collection of custom-event triggers for this group.
-	 * Keeps track of each trigger's event object and event-listener-callback "fetch" function
-	 * @property _customTriggers
-	 * @private
-	 * @type Array
+	 * A group for images. A group can have one time limit and a series of triggers. Thus the images belonging to this group must share these constraints.
+	 * @class ImgLoadGroup
+	 * @extends Base
+	 * @constructor
 	 */
-	this._customTriggers = [];
-
-	/**
-	 * Flag to check if images are above the fold. If foldConditional is true, the group will check each of its image locations at page load. If any part of the image is within the client viewport, the image is displayed immediately
-	 * @property foldConditional
-	 * @type Boolean
-	 */
-	this.foldConditional = false;
-
-	/**
-	 * Class name that will identify images belonging to the group. This class name will be removed from each element in order to fetch images.
-	 * This class should have, in its CSS style definition, "background:none !important;"
-	 * @property className
-	 * @type String
-	 */
-	this.className = null;
-
-	/**
-	 * HTML elements having the class name that is associated with this group
-	 * Elements are stored during the _foldCheck function and reused later during the fetch function. Gives a slight performance improvement when className and foldConditional are both used
-	 * @property _classImageEls
-	 * @private
-	 * @type Array
-	 */
-	this._classImageEls = null;
-
-	// add a listener to set the time limit in the onload
-	YAHOO.util.Event.addListener(window, 'load', this._onloadTasks, this, true);
-	// add the trigger
-	this.addTrigger(trigEl, trigAct);
-
-};
-
-/**
- * Adds a trigger to the group. Call this with the same style as YAHOO.util.Event.addListener
- * @method addTrigger
- * @param {String|HTMLElement} trigEl  The HTML element id or reference to assign the trigger event to
- * @param {String} trigAct The type of event to assign to trigEl
- */
-YAHOO.util.ImageLoader.group.prototype.addTrigger = function(trigEl, trigAct) {
-	if (! trigEl || ! trigAct) {
-		return;
-	}
-	/* Need to wrap the fetch function. Event Util can't distinguish prototyped functions of different instantiations
-	 *   Leads to this scenario: groupA and groupZ both have window-scroll triggers. groupZ also has a 2-sec timeout (groupA has no timeout).
-	 *   groupZ's timeout fires; we remove the triggers. The removeListener call finds the first window-scroll event with Y.u.IL.p.fetch, which is groupA's. 
-	 *   groupA's trigger is removed and never fires, leaving images unfetched
-	 */
-	var wrappedFetch = function() {
-		this.fetch();
+	Y.ImgLoadGroup = function() {
+		// call init first, because it sets up local vars for storing attribute-related info
+		this._init();
+		Y.ImgLoadGroup.superclass.constructor.apply(this, arguments);
 	};
-	this._triggers.push([trigEl, trigAct, wrappedFetch]);
-	YAHOO.util.Event.addListener(trigEl, trigAct, wrappedFetch, this, true);
-};
 
-/**
- * Adds a custom event trigger to the group.
- * @method addCustomTrigger
- * @param {Object} event A YAHOO.util.CustomEvent object
- */
-YAHOO.util.ImageLoader.group.prototype.addCustomTrigger = function(event) {
-	// make sure we're dealing with a CustomEvent object
-	if (! event || ! event instanceof YAHOO.util.CustomEvent) {
-		return;
-	}
+	Y.ImgLoadGroup.NAME = 'imgLoadGroup';
 
-	// see comment in addTrigger()
-	var wrappedFetch = function() {
-		this.fetch();
+	Y.ImgLoadGroup.ATTRS = {
+		
+		/**
+		 * Name for the group. Only used to identify the group in logging statements.
+		 * @attribute name
+		 * @type String
+		 */
+		name: {
+			value: ''
+		},
+
+		/**
+		 * Time limit, in seconds, after which images are fetched regardless of trigger events.
+		 * @attribute timeLimit
+		 * @type Number
+		 */
+		timeLimit: {
+			value: null
+		},
+
+		/**
+		 * Distance below the fold for which images are loaded. Images are not loaded until they are at most this distance away from (or above) the fold.
+		 * This check is performed at page load (domready) and after any window scroll or window resize event (until all images are loaded).
+		 * @attribute foldDistance
+		 * @type Number
+		 */
+		foldDistance: {
+			validator: Y.Lang.isNumber,
+			setter: function(val) { this._setFoldTriggers(); return val; },
+			lazyAdd: false
+		},
+
+		/**
+		 * Class name that will identify images belonging to the group. This class name will be removed from each element in order to fetch images.
+		 * This class should have, in its CSS style definition, "<code>background:none !important;</code>".
+		 * @attribute className
+		 * @type String
+		 */
+		className: {
+			value: null,
+			setter: function(name) { this._className = name; return name; },
+			lazyAdd: false
+		}
+
 	};
-	this._customTriggers.push([event, wrappedFetch]);
-	event.subscribe(wrappedFetch, this, true);
-};
 
-/**
- * Setup to do in the window's onload
- * Initiates time limit for group; executes the fold check for the images
- * @method _onloadTasks
- * @private
- */
-YAHOO.util.ImageLoader.group.prototype._onloadTasks = function() {
-	if (this.timeoutLen && typeof(this.timeoutLen) == 'number' && this.timeoutLen > 0) {
-		this._timeout = setTimeout(this._getFetchTimeout(), this.timeoutLen * 1000);
-	}
+	var groupProto = {
 
-	if (this.foldConditional) {
-		this._foldCheck();
-	}
-};
+		/**
+		 * Initialize all private members needed for the group.
+		 * @method _init
+		 * @private
+		 */
+		_init: function() {
 
-/**
- * Returns the group's fetch method, with the proper closure, for use with setTimeout
- * @method _getFetchTimeout
- * @return {Function}  group's fetch method
- * @private
- */
-YAHOO.util.ImageLoader.group.prototype._getFetchTimeout = function() {
-	var self = this;
-	return function() { self.fetch(); };
-};
+			/**
+			 * Collection of triggers for this group.
+			 * Keeps track of each trigger's event handle, as returned from <code>Y.on</code>.
+			 * @property _triggers
+			 * @private
+			 * @type Array
+			 */
+			this._triggers = [];
 
-/**
- * Registers a background image with the group
- * @method registerBgImage
- * @param {String}	domId	HTML DOM id of the image element
- * @param {String}	url	URL for the image
- * @return {Object}	bgImgObj that was registered, for modifying any attributes in the object
- */
-YAHOO.util.ImageLoader.group.prototype.registerBgImage = function(domId, url) {
-	this._imgObjs[domId] = new YAHOO.util.ImageLoader.bgImgObj(domId, url);
-	return this._imgObjs[domId];
-};
-/**
- * Registers a src image with the group
- * @method registerSrcImage
- * @param {String}	domId	HTML DOM id of the image element
- * @param {String}	url	URL for the image
- * @param {Int}	width	pixel width of the image - defaults to image's natural size
- * @param {Int}	height	pixel height of the image - defaults to image's natural size
- * @return {Object}	srcImgObj that was registered, for modifying any attributes in the object
- */
-YAHOO.util.ImageLoader.group.prototype.registerSrcImage = function(domId, url, width, height) {
-	this._imgObjs[domId] = new YAHOO.util.ImageLoader.srcImgObj(domId, url, width, height);
-	return this._imgObjs[domId];
-};
-/**
- * Registers an alpha-channel-type png background image with the group
- * @method registerPngBgImage
- * @param {String}	domId	HTML DOM id of the image element
- * @param {String}	url	URL for the image
- * @param {Object}  ailProps The AlphaImageLoader properties to be set for the image
- *                    Valid properties are 'sizingMethod' and 'enabled'
- * @return {Object}	pngBgImgObj that was registered, for modifying any attributes in the object
- */
-YAHOO.util.ImageLoader.group.prototype.registerPngBgImage = function(domId, url, ailProps) {
-	this._imgObjs[domId] = new YAHOO.util.ImageLoader.pngBgImgObj(domId, url, ailProps);
-	return this._imgObjs[domId];
-};
+			/**
+			 * Collection of images (<code>Y.ImgLoadImgObj</code> objects) registered with this group, keyed by DOM id.
+			 * @property _imgObjs
+			 * @private
+			 * @type Object
+			 */
+			this._imgObjs = {};
 
-/**
- * Displays the images in the group
- * @method fetch
- */
-YAHOO.util.ImageLoader.group.prototype.fetch = function() {
+			/**
+			 * Timeout object to keep a handle on the time limit.
+			 * @property _timeout
+			 * @private
+			 * @type Object
+			 */
+			this._timeout = null;
 
-	clearTimeout(this._timeout);
-	// remove all listeners
-	for (var i=0, len = this._triggers.length; i < len; i++) {
-		YAHOO.util.Event.removeListener(this._triggers[i][0], this._triggers[i][1], this._triggers[i][2]);
-	}
-	// remove custom event subscriptions
-	for (var i=0, len = this._customTriggers.length; i < len; i++) {
-		this._customTriggers[i][0].unsubscribe(this._customTriggers[i][1], this);
-	}
+			/**
+			 * DOM elements having the class name that is associated with this group.
+			 * Elements are stored during the <code>_foldCheck</code> function and reused later during any subsequent <code>_foldCheck</code> calls - gives a slight performance improvement when the page fold is repeatedly checked.
+			 * @property _classImageEls
+			 * @private
+			 * @type Array
+			 */
+			this._classImageEls = null;
 
-	// fetch whatever we need to by className
-	this._fetchByClass();
+			/**
+			 * Keep the CSS class name in a member variable for ease and speed.
+			 * @property _className
+			 * @private
+			 * @type String
+			 */
+			this._className = null;
 
-	// fetch registered images
-	for (var id in this._imgObjs) {
-		if (YAHOO.lang.hasOwnProperty(this._imgObjs, id)) {
-			this._imgObjs[id].fetch();
-		}
-	}
-};
+			/**
+			 * Boolean tracking whether the window scroll and window resize triggers have been set if this is a fold group.
+			 * @property _areFoldTriggersSet
+			 * @private
+			 * @type Boolean
+			 */
+			this._areFoldTriggersSet = false;
 
-/**
- * Checks the position of each image in the group. If any part of the image is within the client viewport, shows the image immediately.
- * @method _foldCheck
- * @private
- */
-YAHOO.util.ImageLoader.group.prototype._foldCheck = function() {
-	var scrollTop = (document.compatMode != 'CSS1Compat') ? document.body.scrollTop : document.documentElement.scrollTop;
-	var viewHeight = YAHOO.util.Dom.getViewportHeight();
-	var hLimit = scrollTop + viewHeight;
-	var scrollLeft = (document.compatMode != 'CSS1Compat') ? document.body.scrollLeft : document.documentElement.scrollLeft;
-	var viewWidth = YAHOO.util.Dom.getViewportWidth();
-	var wLimit = scrollLeft + viewWidth;
-	for (var id in this._imgObjs) {
-		if (YAHOO.lang.hasOwnProperty(this._imgObjs, id)) {
-			var elPos = YAHOO.util.Dom.getXY(this._imgObjs[id].domId);
-			if (elPos[1] < hLimit && elPos[0] < wLimit) {
-				this._imgObjs[id].fetch();
+			/**
+			 * The maximum pixel height of the document that has been made visible.
+			 * During fold checks, if the user scrolls up then there's no need to check for newly exposed images.
+			 * @property _maxKnownHLimit
+			 * @private
+			 * @type Int
+			 */
+			this._maxKnownHLimit = 0;
+
+			// add a listener to domready that will start the time limit
+			Y.on('domready', this._onloadTasks, this);
+		},
+
+		/**
+		 * Adds a trigger to the group. Arguments are passed to <code>Y.on</code>.
+		 * @method addTrigger
+		 * @chainable
+		 * @param {Object} obj  The DOM object to attach the trigger event to
+		 * @param {String} type  The event type
+		 */
+		addTrigger: function(obj, type) {
+			if (! obj || ! type) {
+				return this;
 			}
-		}
-	}
-	// and by class
-	if (this.className) {
-		this._classImageEls = YAHOO.util.Dom.getElementsByClassName(this.className);
-		for (var i=0, len = this._classImageEls.length; i < len; i++) {
-			var elPos = YAHOO.util.Dom.getXY(this._classImageEls[i]);
-			if (elPos[1] < hLimit && elPos[0] < wLimit) {
-				YAHOO.util.Dom.removeClass(this._classImageEls[i], this.className);
+
+
+			/* Need to wrap the fetch function. Event Util can't distinguish prototyped functions of different instantiations.
+			 *   Leads to this scenario: groupA and groupZ both have window-scroll triggers. groupZ also has a 2-sec timeout (groupA has no timeout).
+			 *   groupZ's timeout fires; we remove the triggers. The detach call finds the first window-scroll event with Y.ILG.p.fetch, which is groupA's. 
+			 *   groupA's trigger is removed and never fires, leaving images unfetched.
+			 */
+			var wrappedFetch = function() {
+				this.fetch();
+			};
+			this._triggers.push( Y.on(type, wrappedFetch, obj, this) );
+
+			return this;
+		},
+
+		/**
+		 * Adds a custom event trigger to the group.
+		 * @method addCustomTrigger
+		 * @chainable
+		 * @param {String} name  The name of the event
+		 * @param {Object} obj  The object on which to attach the event. <code>obj</code> is optional - by default the event is attached to the <code>Y</code> instance
+		 */
+		addCustomTrigger: function(name, obj) {
+			if (! name) {
+				return this;
 			}
+
+
+			// see comment in addTrigger()
+			var wrappedFetch = function() {
+				this.fetch();
+			};
+			if (Y.Lang.isUndefined(obj)) {
+				this._triggers.push( Y.on(name, wrappedFetch, this) );
+			}
+			else {
+				this._triggers.push( obj.on(name, wrappedFetch, this) );
+			}
+
+			return this;
+		},
+
+		/**
+		 * Sets the window scroll and window resize triggers for any group that is fold-conditional (i.e., has a fold distance set).
+		 * @method _setFoldTriggers
+		 * @private
+		 */
+		_setFoldTriggers: function() {
+			if (this._areFoldTriggersSet) {
+				return;
+			}
+
+
+			var wrappedFoldCheck = function() {
+				this._foldCheck();
+			};
+			this._triggers.push( Y.on('scroll', wrappedFoldCheck, window, this) );
+			this._triggers.push( Y.on('resize', wrappedFoldCheck, window, this) );
+			this._areFoldTriggersSet = true;
+		},
+
+		/**
+		 * Performs necessary setup at domready time.
+		 * Initiates time limit for group; executes the fold check for the images.
+		 * @method _onloadTasks
+		 * @private
+		 */
+		_onloadTasks: function() {
+			var timeLim = this.get('timeLimit');
+			if (timeLim && timeLim > 0) {
+				this._timeout = setTimeout(this._getFetchTimeout(), timeLim * 1000);
+			}
+
+			if (! Y.Lang.isUndefined(this.get('foldDistance'))) {
+				this._foldCheck();
+			}
+		},
+
+		/**
+		 * Returns the group's <code>fetch</code> method, with the proper closure, for use with <code>setTimeout</code>.
+		 * @method _getFetchTimeout
+		 * @return {Function}  group's <code>fetch</code> method
+		 * @private
+		 */
+		_getFetchTimeout: function() {
+			var self = this;
+			return function() { self.fetch(); };
+		},
+
+		/**
+		 * Registers an image with the group.
+		 * Arguments are passed through to a <code>Y.ImgLoadImgObj</code> constructor; see that class' attribute documentation for detailed information. "<code>domId</code>" is a required attribute.
+		 * @method registerImage
+		 * @param {Object} *  A configuration object literal with attribute name/value pairs  (passed through to a <code>Y.ImgLoadImgObj</code> constructor)
+		 * @return {Object}  <code>Y.ImgLoadImgObj</code> that was registered
+		 */
+		registerImage: function() {
+			var domId = arguments[0].domId;
+			if (! domId) {
+				return null;
+			}
+
+
+			this._imgObjs[domId] = new Y.ImgLoadImgObj(arguments[0]);
+			return this._imgObjs[domId];
+		},
+
+		/**
+		 * Displays the images in the group.
+		 * This method is called when a trigger fires or the time limit expires; it shouldn't be called externally, but is not private in the rare event that it needs to be called immediately.
+		 * @method fetch
+		 */
+		fetch: function() {
+
+			// done with the triggers
+			this._clearTriggers();
+
+			// fetch whatever we need to by className
+			this._fetchByClass();
+
+			// fetch registered images
+			for (var id in this._imgObjs) {
+				if (this._imgObjs.hasOwnProperty(id)) {
+					this._imgObjs[id].fetch();
+				}
+			}
+		},
+
+		/**
+		 * Clears the timeout and all triggers associated with the group.
+		 * @method _clearTriggers
+		 * @private
+		 */
+		_clearTriggers: function() {
+			clearTimeout(this._timeout);
+			// detach all listeners
+			for (var i=0, len = this._triggers.length; i < len; i++) {
+				this._triggers[i].detach();
+			}
+		},
+
+		/**
+		 * Checks the position of each image in the group. If any part of the image is within the specified distance (<code>foldDistance</code>) of the client viewport, the image is fetched immediately.
+		 * @method _foldCheck
+		 * @private
+		 */
+		_foldCheck: function() {
+
+			var allFetched = true,
+			    viewReg = Y.DOM.viewportRegion(),
+			    hLimit = viewReg.bottom + this.get('foldDistance'),
+					id, imgFetched, els, i, len;
+
+			// unless we've uncovered new frontiers, there's no need to continue
+			if (hLimit <= this._maxKnownHLimit) {
+				return;
+			}
+			this._maxKnownHLimit = hLimit;
+
+			for (id in this._imgObjs) {
+				if (this._imgObjs.hasOwnProperty(id)) {
+					imgFetched = this._imgObjs[id].fetch(hLimit);
+					allFetched = allFetched && imgFetched;
+				}
+			}
+
+			// and by class
+			if (this._className) {
+				if (this._classImageEls === null) {
+					// get all the relevant elements and store them
+					this._classImageEls = [];
+					els = Y.all('.' + this._className);
+					els.each( function(node) { this._classImageEls.push( { el: node, y: node.getY(), fetched: false } ); }, this);
+				}
+				els = this._classImageEls;
+				for (i=0, len = els.length; i < len; i++) {
+					if (els[i].fetched) {
+						continue;
+					}
+					if (els[i].y && els[i].y <= hLimit) {
+						els[i].el.removeClass(this._className);
+						els[i].fetched = true;
+					}
+					else {
+						allFetched = false;
+					}
+				}
+			}
+			
+			// if allFetched, remove listeners
+			if (allFetched) {
+				this._clearTriggers();
+			}
+		},
+
+		/**
+		 * Finds all elements in the DOM with the class name specified in the group. Removes the class from the element in order to let the style definitions trigger the image fetching.
+		 * @method _fetchByClass
+		 * @private
+		 */
+		_fetchByClass: function() {
+			if (! this._className) {
+				return;
+			}
+
+
+			Y.all('.' + this._className).removeClass(this._className);
 		}
-	}
-};
 
-/**
- * Finds all elements in the Dom with the class name specified in the group. Removes the class from the element in order to let the style definitions trigger the image fetching
- * @method _fetchByClass
- * @private
- */
-YAHOO.util.ImageLoader.group.prototype._fetchByClass = function() {
-	if (! this.className) {
-		return;
-	}
-
-	// this._classImageEls may have been set during _foldCheck
-	if (this._classImageEls === null) {
-		this._classImageEls = YAHOO.util.Dom.getElementsByClassName(this.className);
-	}
-	YAHOO.util.Dom.removeClass(this._classImageEls, this.className);
-};
+	};
 
 
-/**
- * Base class for image objects to be registered with the groups
- * @class YAHOO.util.ImageLoader.imgObj
- * @constructor
- * @param {String}	domId	HTML DOM id of the image element
- * @param {String}	url	URL for the image
- */
-YAHOO.util.ImageLoader.imgObj = function(domId, url) {
-	/**
-	 * HTML DOM id of the image element
-	 * @property domId
-	 * @type String
-	 */
-	this.domId = domId;
+	Y.extend(Y.ImgLoadGroup, Y.Base, groupProto);
+
+
+	//------------------------------------------------
+
 
 	/**
-	 * URL for the image
-	 * @property url
-	 * @type String
+	 * Image objects to be registered with the groups
+	 * @class ImgLoadImgObj
+	 * @extends Base
+	 * @constructor
 	 */
-	this.url = url;
+	Y.ImgLoadImgObj = function() {
+		Y.ImgLoadImgObj.superclass.constructor.apply(this, arguments);
+		this._init();
+	};
+		
+	Y.ImgLoadImgObj.NAME = 'imgLoadImgObj';
 
-	/**
-	 * Pixel width of the image. Will be set as a "width" attribute after the image is fetched.
-	 * Detaults to the natural width of the image.
-	 * Only appropriate with src images
-	 * @property width
-	 * @type Int
-	 */
-	this.width = null;
+	Y.ImgLoadImgObj.ATTRS = {
+		/**
+		 * HTML DOM id of the image element.
+		 * @attribute domId
+		 * @type String
+		 */
+		domId: {
+			value: null,
+			writeOnce: true
+		},
 
-	/**
-	 * Pixel height of the image. Will be set as a "height" attribute after the image is fetched.
-	 * Detaults to the natural height of the image.
-	 * Only appropriate with src images
-	 * @property height
-	 * @type Int
-	 */
-	this.height = null;
+		/**
+		 * Background URL for the image.
+		 * For an image whose URL is specified by "<code>background-image</code>" in the element's style.
+		 * @attribute bgUrl
+		 * @type String
+		 */
+		bgUrl: {
+			value: null
+		},
 
-	/**
-	 * Whether the style.visibility should be set to "visible" after the image is fetched.
-	 * Used when setting src images as visibility:hidden prior to image fetching
-	 * @property setVisible
-	 * @type Boolean
-	 */
-	this.setVisible = false;
+		/**
+		 * Source URL for the image.
+		 * For an image whose URL is specified by a "<code>src</code>" attribute in the DOM element.
+		 * @attribute srcUrl
+		 * @type String
+		 */
+		srcUrl: {
+			value: null
+		},
 
-	/**
-	 * Whether the image has already been fetched. In the case of a foldCondional group, keeps track for when the trigger is fired so images aren't fetched twice
-	 * @property _fetched
-	 * @type Boolean
-	 * @private
-	 */
-	this._fetched = false;
-};
+		/**
+		 * Pixel width of the image. Will be set as a <code>width</code> attribute on the DOM element after the image is fetched.
+		 * Defaults to the natural width of the image (no <code>width</code> attribute will be set).
+		 * Usually only used with src images.
+		 * @attribute width
+		 * @type Int
+		 */
+		width: {
+			value: null
+		},
 
-/**
- * Displays the image; puts the URL into the DOM
- * @method fetch
- */
-YAHOO.util.ImageLoader.imgObj.prototype.fetch = function() {
-	if (this._fetched) {
-		return;
-	}
-	var el = document.getElementById(this.domId);
-	if (! el) {
-		return;
-	}
-	this._applyUrl(el);
+		/**
+		 * Pixel height of the image. Will be set as a <code>height</code> attribute on the DOM element after the image is fetched.
+		 * Defaults to the natural height of the image (no <code>height</code> attribute will be set).
+		 * Usually only used with src images.
+		 * @attribute height
+		 * @type Int
+		 */
+		height: {
+			value: null
+		},
 
-	if (this.setVisible) {
-		el.style.visibility = 'visible';
-	}
-	if (this.width) {
-		el.width = this.width;
-	}
-	if (this.height) {
-		el.height = this.height;
-	}
-	this._fetched = true;
-};
+		/**
+		 * Whether the image's <code>style.visibility</code> should be set to <code>visible</code> after the image is fetched.
+		 * Used when setting images as <code>visibility:hidden</code> prior to image fetching.
+		 * @attribute setVisible
+		 * @type Boolean
+		 */
+		setVisible: {
+			value: false
+		},
 
-/**
- * Inserts the image URL into the DOM so that the image is displayed.
- * Must be overridden by child class
- * @method _applyUrl
- * @param {Object}	el	HTML DOM element
- * @private
- */
-YAHOO.util.ImageLoader.imgObj.prototype._applyUrl = function(el) {
-};
+		/**
+		 * Whether the image is a PNG.
+		 * PNG images get special treatment in that the URL is specified through AlphaImageLoader for IE, versions 6 and earlier.
+		 * Only used with background images.
+		 * @attribute isPng
+		 * @type Boolean
+		 */
+		isPng: {
+			value: false
+		},
 
-/**
- * Background image object. A background image is one whose URL is specified by "background-image" in the element's style
- * @class YAHOO.util.ImageLoader.bgImgObj
- * @constructor
- * @extends YAHOO.util.ImageLoader.imgObj
- * @param {String}	domId	HTML DOM id of the image element
- * @param {String}	url	URL for the image
- */
-YAHOO.util.ImageLoader.bgImgObj = function(domId, url) {
-	YAHOO.util.ImageLoader.bgImgObj.superclass.constructor.call(this, domId, url);
-};
+		/**
+		 * AlphaImageLoader <code>sizingMethod</code> property to be set for the image.
+		 * Only set if <code>isPng</code> value for this image is set to <code>true</code>.
+		 * Defaults to <code>scale</code>.
+		 * @attribute sizingMethod
+		 * @type String
+		 */
+		sizingMethod: {
+			value: 'scale'
+		},
 
-YAHOO.lang.extend(YAHOO.util.ImageLoader.bgImgObj, YAHOO.util.ImageLoader.imgObj);
+		/**
+		 * AlphaImageLoader <code>enabled</code> property to be set for the image.
+		 * Only set if <code>isPng</code> value for this image is set to <code>true</code>.
+		 * Defaults to <code>true</code>.
+		 * @attribute enabled
+		 * @type String
+		 */
+		enabled: {
+			value: 'true'
+		}
 
-/**
- * Inserts the image URL into the DOM so that the image is displayed.
- * Sets style.backgroundImage
- * @method _applyUrl
- * @param {Object}	el	HTML DOM element
- * @private
- */
-YAHOO.util.ImageLoader.bgImgObj.prototype._applyUrl = function(el) {
-	el.style.backgroundImage = "url('" + this.url + "')";
-};
+	};
 
-/**
- * Source image object. A source image is one whose URL is specified by a src attribute in the DOM element
- * @class YAHOO.util.ImageLoader.srcImgObj
- * @constructor
- * @extends YAHOO.util.ImageLoader.imgObj
- * @param {String}	domId	HTML DOM id of the image element
- * @param {String}	url	URL for the image
- * @param {Int}	width	pixel width of the image - defaults to image's natural size
- * @param {Int}	height	pixel height of the image - defaults to image's natural size
- */
-YAHOO.util.ImageLoader.srcImgObj = function(domId, url, width, height) {
-	YAHOO.util.ImageLoader.srcImgObj.superclass.constructor.call(this, domId, url);
-	this.width = width;
-	this.height = height;
-};
+	var imgProto = {
 
-YAHOO.lang.extend(YAHOO.util.ImageLoader.srcImgObj, YAHOO.util.ImageLoader.imgObj);
+		/**
+		 * Initialize all private members needed for the group.
+		 * @method _init
+		 * @private
+		 */
+		_init: function() {
 
-/**
- * Inserts the image URL into the DOM so that the image is displayed.
- * Sets src
- * @method _applyUrl
- * @param {Object}	el	HTML DOM element
- * @private
- */
-YAHOO.util.ImageLoader.srcImgObj.prototype._applyUrl = function(el) {
-	el.src = this.url;
-};
+			/**
+			 * Whether this image has already been fetched.
+			 * In the case of fold-conditional groups, images won't be fetched twice.
+			 * @property _fetched
+			 * @private
+			 * @type Boolean
+			 */
+			this._fetched = false;
 
-/**
- * PNG background image object. A PNG background image is one whose URL is specified through AlphaImageLoader or by "background-image" in the element's style
- * @class YAHOO.util.ImageLoader.pngBgImgObj
- * @constructor
- * @extends YAHOO.util.ImageLoader.imgObj
- * @param {String}	domId	HTML DOM id of the image element
- * @param {String}	url	URL for the image
- * @param {Object}  ailProps The AlphaImageLoader properties to be set for the image
- *                    Valid properties are 'sizingMethod' and 'enabled'
- */
-YAHOO.util.ImageLoader.pngBgImgObj = function(domId, url, ailProps) {
-	YAHOO.util.ImageLoader.pngBgImgObj.superclass.constructor.call(this, domId, url);
+			/**
+			 * The Node object returned from <code>Y.one</code>, to avoid repeat calls to access the DOM.
+			 * @property _imgEl
+			 * @private
+			 * @type Object
+			 */
+			this._imgEl = null;
 
-	/**
-	 * AlphaImageLoader properties to be set for the image.
-	 * Valid properties are "sizingMethod" and "enabled".
-	 * @property props
-	 * @type Object
-	 */
-	this.props = ailProps || {};
-};
+			/**
+			 * The vertical position returned from <code>getY</code>, to avoid repeat calls to access the DOM.
+			 * The Y position is checked only for images registered with fold-conditional groups. The position is checked first at page load (domready)
+			 *   and this caching enhancement assumes that the image's vertical position won't change after that first check.
+			 * @property _yPos
+			 * @private
+			 * @type Int
+			 */
+			this._yPos = null;
+		},
 
-YAHOO.lang.extend(YAHOO.util.ImageLoader.pngBgImgObj, YAHOO.util.ImageLoader.imgObj);
+		/**
+		 * Displays the image; puts the URL into the DOM.
+		 * This method shouldn't be called externally, but is not private in the rare event that it needs to be called immediately.
+		 * @method fetch
+		 * @param {Int} withinY  The pixel distance from the top of the page, for which if the image lies within, it will be fetched. Undefined indicates that no check should be made, and the image should always be fetched
+		 * @return {Boolean}  Whether the image has been fetched (either during this execution or previously)
+		 */
+		fetch: function(withinY) {
+			if (this._fetched) {
+				return true;
+			}
 
-/**
- * Inserts the image URL into the DOM so that the image is displayed.
- * If the browser is determined to be IE6 (or older), sets the AlphaImageLoader src; otherwise sets style.backgroundImage
- * @method _applyUrl
- * @param {Object}	el	HTML DOM element
- * @private
- */
-YAHOO.util.ImageLoader.pngBgImgObj.prototype._applyUrl = function(el) {
-	if (YAHOO.env.ua.ie && YAHOO.env.ua.ie <= 6) {
-		var sizingMethod = (YAHOO.lang.isUndefined(this.props.sizingMethod)) ? 'scale' : this.props.sizingMethod;
-		var enabled = (YAHOO.lang.isUndefined(this.props.enabled)) ? 'true' : this.props.enabled;
-		el.style.filter = 'progid:DXImageTransform.Microsoft.AlphaImageLoader(src="' + this.url + '", sizingMethod="' + sizingMethod + '", enabled="' + enabled + '")';
-	}
-	else {
-		el.style.backgroundImage = "url('" + this.url + "')";
-	}
-};
-YAHOO.register("imageloader", YAHOO.util.ImageLoader, {version: "2.7.0", build: "1799"});
+			var el = this._getImgEl(),
+			    yPos;
+			if (! el) {
+				return false;
+			}
+
+			if (withinY) {
+				// need a distance check
+				yPos = this._getYPos();
+				if (! yPos || yPos > withinY) {
+					return false;
+				}
+			}
+
+
+			// apply url
+			if (this.get('bgUrl') !== null) {
+				// bg url
+				if (this.get('isPng') && Y.UA.ie && Y.UA.ie <= 6) {
+					// png for which to apply AlphaImageLoader
+					el.setStyle('filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(src="' + this.get('bgUrl') + '", sizingMethod="' + this.get('sizingMethod') + '", enabled="' + this.get('enabled') + '")');
+				}
+				else {
+					// regular bg image
+					el.setStyle('backgroundImage', "url('" + this.get('bgUrl') + "')");
+				}
+			}
+			else if (this.get('srcUrl') !== null) {
+				// regular src image
+				el.setAttribute('src', this.get('srcUrl'));
+			}
+
+			// apply attributes
+			if (this.get('setVisible')) {
+				el.setStyle('visibility', 'visible');
+			}
+			if (this.get('width')) {
+				el.setAttribute('width', this.get('width'));
+			}
+			if (this.get('height')) {
+				el.setAttribute('height', this.get('height'));
+			}
+
+			this._fetched = true;
+
+			return true;
+		},
+
+		/**
+		 * Gets the object (as a <code>Y.Node</code>) of the DOM element indicated by "<code>domId</code>".
+		 * @method _getImgEl
+		 * @returns {Object} DOM element of the image as a <code>Y.Node</code> object
+		 * @private
+		 */
+		_getImgEl: function() {
+			if (this._imgEl === null) {
+				this._imgEl = Y.one('#' + this.get('domId'));
+			}
+			return this._imgEl;
+		},
+
+		/**
+		 * Gets the Y position of the node in page coordinates.
+		 * Expects that the page-coordinate position of the image won't change.
+		 * @method _getYPos
+		 * @returns {Object} The Y position of the image
+		 * @private
+		 */
+		_getYPos: function() {
+			if (this._yPos === null) {
+				this._yPos = this._getImgEl().getY();
+			}
+			return this._yPos;
+		}
+
+	};
+
+
+	Y.extend(Y.ImgLoadImgObj, Y.Base, imgProto);
+
+
+
+
+}, '3.3.0' ,{requires:['base-base', 'node-style', 'node-screen']});

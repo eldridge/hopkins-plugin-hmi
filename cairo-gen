@@ -1,0 +1,42 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use Cairo;
+use DateTime;
+
+my $num_hours	= 12;
+my $begin		= DateTime->now;
+
+$begin->truncate(to => 'hour');
+
+my $surface = Cairo::ImageSurface->create('argb32', 750, 400);
+my $ctx     = Cairo::Context->create($surface);
+
+$ctx->rectangle(0.5, 0.5, 749, 20);
+
+foreach my $offset (0 .. $num_hours) {
+	my $date = $begin->clone->add(hours => $offset);
+
+	my $w = 749 / $num_hours;
+
+	$ctx->move_to(int($w * $offset) + $w/2, 10);
+	$ctx->show_text($date->strftime('%H'));
+	use Data::Dump;
+	dd $ctx->text_extents($date->strftime('%H'));
+
+	$ctx->move_to(int($w * $offset)+0.5, 0);
+	$ctx->line_to(int($w * $offset)+0.5, 20);
+}
+
+#my $font = Cairo::ScaledFont->create('Helvetica', 
+
+
+$ctx->set_source_rgb(0, 0, 0);
+$ctx->set_line_width(1.0);
+$ctx->stroke;
+$ctx->show_page;
+
+$surface->write_to_png('schedule.png');
+

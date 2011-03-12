@@ -17,13 +17,12 @@
 		<link rel="stylesheet" type="text/css" href="/static/skins/[% page.skin %]/[% style %]" media="screen, projection, tv " />
 		[% END %]
 
-		<script type="text/javascript">var yuireq = [% page.yui.unique.to_json %];</script>
 		[% FOREACH script = page.scripts %]
 		<script type="text/javascript" src="[% script %]"></script>
 		[%- END %]
 	</head>
 
-	<body id="root" class="yui-skin-sam">
+	<body id="root" class="yui3-skin-sam yui-skin-sam">
 		<div id="header">
 			<h1>Hopkins HMI</h1>
 		</div>

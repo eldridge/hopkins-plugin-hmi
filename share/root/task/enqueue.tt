@@ -1,4 +1,3 @@
-[% page.yui.push('button', 'calendar', 'container', 'slider') %]
 [% page.scripts.push('/static/scripts/task/enqueue.js') %]
 [% page.styles.push('enqueue.css') %]
 
@@ -31,7 +30,7 @@
 			<th>Priority</th>
 			<td>
 				<input id="priority" type="hidden" name="priority" value="5" />
-				<div id="priority-slider-bg"><div id="priority-slider-thumb"><img src="/static/yui/build/slider/assets/thumb-n.gif" /></div></div>
+				<div id="priority-slider"></div>
 				<div id="priority-text"></div>
 			</td>
 		</tr>

@@ -9,5 +9,4 @@
 
 [% page.styles.push('default.css') %]
 
-[% page.scripts.push('/static/yui/build/yuiloader-dom-event/yuiloader-dom-event.js') %]
-[% page.scripts.push('/static/scripts/hopkins.js') %]
+[% page.scripts.push('/static/yui/build/yui/yui-min.js') %]

@@ -1,24 +1,19 @@
-(function() {
+YUI().use('event', 'slider', function (Y) {
 	var dialog;
 	var slider;
 
-	evtLoaded.subscribe(function() {
-		YAHOO.util.Event.addListener('btn_date_to_execute', 'click', onClockButtonClick);
+	//evtLoaded.subscribe(function() {
+	Y.on('available', function() {
+		Y.on('click', onClockButtonClick, '#btn_date_to_execute');
+	}, '#btn_date_to_execute');
 
-		slider = YAHOO.widget.Slider.getHorizSlider('priority-slider-bg', 'priority-slider-thumb', 0, 160, 20);
+	Y.on('available', function() {
+		slider = new Y.Slider({ min: 1, max: 9, value: 5, length: '160px' });
 
-		slider.subscribe('change', onPriorityChange);
-		slider.setValue(80);
-
-		var button = new YAHOO.widget.Button('button_enqueue');
-
-		button.subscribe('click', onEnqueueClick);
-	});
-
-	function onEnqueueClick()
-	{
-		YAHOO.util.Dom.get('enqueue').submit();
-	}
+		slider.on('valueChange', onPriorityChange);
+		slider.render('#priority-slider');
+		slider.setValue(5);
+	}, '#priority-slider');
 
 	function create_dialog()
 	{
@@ -99,6 +94,8 @@
 
 	function onClockButtonClick(e)
 	{
+		console.log('poop');
+
 		if (!dialog)
 			create_dialog();
 
@@ -128,13 +125,8 @@
 		dialog.hide();
 	}
 
-	function onPriorityChange()
+	function onPriorityChange(e)
 	{
-		var input	= YAHOO.util.Dom.get('priority');
-		var obj		= YAHOO.util.Dom.get('priority-text');
-		var node	= obj.firstChild || document.createTextNode();
-		var value	= Math.round(slider.getValue() / 20);
-
 		var labels	=
 		[
 			'bottom of the pile',
@@ -148,10 +140,7 @@
 			'as soon as possible'
 		];
 
-		node.nodeValue	= labels[value];
-		input.value		= value + 1;
-
-		if (!obj.firstChild)
-			obj.appendChild(node);
+		Y.one('#priority-text').setContent(labels[e.newVal - 1]);
+		Y.one('#priority').value = e.newVal;
 	}
-})();
+});
